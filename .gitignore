@@ -1,0 +1,18 @@
+# Dependency directories
+dist
+.env
+.pnpm-store
+
+# Node
+node_modules/
+pnpm-lock.yaml
+
+# Logs
+*.log
+
+# Builds
+dist
+build
+
+# Editor
+.vscode
