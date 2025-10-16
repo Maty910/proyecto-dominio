@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest"
 import { CreateReservationUseCase } from "../create-reservation.use-case"
 import { Reservation } from "../../entities/Reservation"
 import { InMemoryReservationRepository } from '../../services/InMemoryReservationRepository'
+import { InvalidDatesError, OverlappingReservationError } from "../../errors"
 
 describe("CreateReservationUseCase - overlaps", () => {
   let repo: InMemoryReservationRepository;
@@ -10,6 +11,7 @@ describe("CreateReservationUseCase - overlaps", () => {
   beforeEach(() => {
     repo = new InMemoryReservationRepository();
     useCase = new CreateReservationUseCase(repo);
+    repo.clear();
   })
 
   it("Should throw when new reservation overlaps existing for same room", async () => {
@@ -24,20 +26,19 @@ describe("CreateReservationUseCase - overlaps", () => {
     })
 
     // test overlapping scenarios
-    await expect(() => useCase.execute({
-      id: "new",
-      userId: "u2",
-      roomId: "room-1",
-      checkInDate: new Date("2025-10-24"),
-      checkOutDate: new Date("2025-10-27"),
-      status: "pending",
-    })).rejects.toThrow("Reservation dates overlap with existing booking for this room")
+    await expect(
+      useCase.execute({
+        id: "new",
+        userId: "u2",
+        roomId: "room-1",
+        checkInDate: new Date("2025-10-24"),
+        checkOutDate: new Date("2025-10-27"),
+        status: "pending",
+      })
+    ).rejects.toThrowError(OverlappingReservationError)
   }),
 
   it("Should create a reservation successfully", async () => {
-    const repo = new InMemoryReservationRepository()
-    const useCase = new CreateReservationUseCase(repo)
-
     const reservation = await useCase.execute({
       id: "1",
       userId: "user-1",
@@ -53,9 +54,6 @@ describe("CreateReservationUseCase - overlaps", () => {
   })
 
   it("Should throw an error if check-out date is before check-in date", async () => {
-    const repo = new InMemoryReservationRepository()
-    const useCase = new CreateReservationUseCase(repo)
-
     await expect(
       useCase.execute({
         id: "2",
@@ -65,6 +63,6 @@ describe("CreateReservationUseCase - overlaps", () => {
         checkOutDate: new Date("2025-10-20"),
         status: "pending"
       })
-    ).rejects.toThrowError("Check-out date must be after check-in date")
+    ).rejects.toThrowError(InvalidDatesError)
   })
 })
