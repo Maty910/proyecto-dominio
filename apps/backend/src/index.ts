@@ -1,16 +1,36 @@
 import express from 'express'
-import bodyParser from 'body-parser'
+// use express.json() instead of body-parser to avoid missing type declarations
+
+import { Reservation } from "@hotel/domain/src/entities/Reservation"
 
 // Imports from domain (using relative path to source in monorepo)
-import { InMemoryReservationRepository } from '../../../domain/src/services/InMemoryReservationRepository'
-import { CreateReservationUseCase } from '../../../domain/src/use-cases/create-reservation.use-case'
-import { InvalidDatesError, OverlappingReservationError } from '../../../domain/src/errors'
+import { InMemoryReservationRepository } from "@hotel/domain/src/services/InMemoryReservationRepository"
+import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
+import { InvalidDatesError, OverlappingReservationError } from "@hotel/domain/src/errors"
 
 const app = express()
-app.use(bodyParser.json())
+const port = process.env.PORT || 3000
+app.use(express.json())
 
 const repo = new InMemoryReservationRepository()
 const createReservation = new CreateReservationUseCase(repo)
+
+app.get("/", (req, res) => {
+  const reservation = new Reservation({
+    id: "1",
+    userId: "user-1",
+    roomId: "room-1",
+    checkInDate: new Date("2025-10-20"),
+    checkOutDate: new Date("2025-10-25"),
+    status: "confirmed"
+  })
+
+
+  res.json({
+    message: "Reservation created successfully!",
+    reservation,
+  })
+})
 
 app.post("/reservations", async (req, res) => {
   try {
@@ -50,7 +70,6 @@ app.post("/reservations", async (req, res) => {
   }
 })
 
-const port = process.env.PORT || 3000
 app.listen(port, () => {
   console.log(`Backend listening on http://localhost:${port}`)
 })
