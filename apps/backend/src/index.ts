@@ -1,11 +1,9 @@
 import express from 'express'
-// use express.json() instead of body-parser to avoid missing type declarations
 
 import { Reservation } from "@hotel/domain/src/entities/Reservation"
-
-// Imports from domain (using relative path to source in monorepo)
 import { InMemoryReservationRepository } from "@hotel/domain/src/services/InMemoryReservationRepository"
 import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
+import { GetReservationsByRoomUseCase } from "@hotel/domain/src/use-cases/get-reservations-by-room.use-case"
 import { InvalidDatesError, OverlappingReservationError } from "@hotel/domain/src/errors"
 
 const app = express()
@@ -14,30 +12,21 @@ app.use(express.json())
 
 const repo = new InMemoryReservationRepository()
 const createReservation = new CreateReservationUseCase(repo)
+const getReservationsByRoom = new GetReservationsByRoomUseCase(repo)
 
-app.get("/", (req, res) => {
-  const reservation = new Reservation({
-    id: "1",
-    userId: "user-1",
-    roomId: "room-1",
-    checkInDate: new Date("2025-10-20"),
-    checkOutDate: new Date("2025-10-25"),
-    status: "confirmed"
-  })
+app.get("/reservations/:roomId", async (req, res) => {
+  const { roomId } = req.params
+  const reservations = await getReservationsByRoom.execute(roomId)
 
-
-  res.json({
-    message: "Reservation created successfully!",
-    reservation,
-  })
+  res.json(reservations)
 })
 
 app.post("/reservations", async (req, res) => {
   try {
-    const { id, userId, roomId, checkInDate, CheckOutDate, status } = req.body
+    const { id, userId, roomId, checkInDate, checkOutDate, status } = req.body
 
     //basic validation & parsing dates
-    if (!id || !userId || !roomId || !checkInDate || !CheckOutDate || !status) {
+    if (!id || !userId || !roomId || !checkInDate || !checkOutDate || !status) {
       return res.status(400).json({ message: "Missing required fields" })
     }
 
@@ -46,7 +35,7 @@ app.post("/reservations", async (req, res) => {
       userId,
       roomId,
       checkInDate: new Date(checkInDate),
-      checkOutDate: new Date(CheckOutDate),
+      checkOutDate: new Date(checkOutDate),
       status
     })
 
