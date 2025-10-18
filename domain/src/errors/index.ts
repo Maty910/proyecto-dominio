@@ -11,3 +11,10 @@ export class OverlappingReservationError extends Error {
     this.name = "OverlappingReservationError"
   }
 }
+
+export class ReservationNotFoundError extends Error {
+  constructor(message = "Reservation not found") {
+    super(message)
+    this.name = "ReservationNotFoundError"
+  }
+}

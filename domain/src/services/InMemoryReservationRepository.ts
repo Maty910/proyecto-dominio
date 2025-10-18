@@ -5,7 +5,14 @@ export class InMemoryReservationRepository implements ReservationRepository {
   private items: Reservation[] = [];
 
   async save(reservation: Reservation): Promise<void> {
-    this.items.push(reservation)
+    const index = this.items.findIndex(r => r.id === reservation.id)
+    
+    if (index !== -1) {
+      // Si ya existe, reemplaza la reserva
+      this.items[index] = reservation
+    } else {
+      this.items.push(reservation)
+    }
   }
 
   async findById(id: string): Promise<Reservation | null> {
