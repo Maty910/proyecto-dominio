@@ -28,7 +28,7 @@ export class UpdateReservationUseCase  {
     }
 
     //Validar fechas
-    if (data.checkInDate >= data.checkInDate){
+    if (data.checkInDate >= data.checkOutDate){
       throw new InvalidDatesError()
     }
 

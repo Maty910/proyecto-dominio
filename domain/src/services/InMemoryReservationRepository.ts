@@ -13,6 +13,10 @@ export class InMemoryReservationRepository implements ReservationRepository {
     return reservation || null
   }
 
+  async findAll(): Promise<Reservation[]> {
+    return this.items
+  }
+
   async findByRoomId(roomId: string): Promise<Reservation[]> {
     return this.items.filter(r => r.roomId === roomId)
   }
