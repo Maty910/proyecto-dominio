@@ -59,6 +59,18 @@ app.post("/reservations", async (req, res) => {
   }
 })
 
+app.delete("/reservations/:id", async (req, res) => {
+  const { id } = req.params
+  const existing = await repo.findById(id)
+
+  if (!existing) {
+    return res.status(404).json({ message: "Reservation not found" })
+  }
+
+  await repo.delete(id)
+  return res.status(204).send().json({ message: "Reservation deleted" })
+})
+
 app.listen(port, () => {
   console.log(`Backend listening on http://localhost:${port}`)
 })

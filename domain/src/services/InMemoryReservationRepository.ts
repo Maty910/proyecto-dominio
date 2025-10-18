@@ -8,8 +8,21 @@ export class InMemoryReservationRepository implements ReservationRepository {
     this.items.push(reservation)
   }
 
+  async findById(id: string): Promise<Reservation | null> {
+    const reservation = this.items.find(r => r.id === id)
+    return reservation || null
+  }
+
   async findByRoomId(roomId: string): Promise<Reservation[]> {
     return this.items.filter(r => r.roomId === roomId)
+  }
+
+  async delete(id: string): Promise<void> {
+    for (let i = this.items.length - 1; i >= 0; i--) {
+      if (this.items[i].id === id) {
+        this.items.splice(i, 1)
+      }
+    }
   }
 
   clear() {
