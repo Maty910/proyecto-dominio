@@ -5,7 +5,9 @@ import { InMemoryReservationRepository } from "@hotel/domain/src/services/InMemo
 import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
 import { GetReservationsByRoomUseCase } from "@hotel/domain/src/use-cases/get-reservations-by-room.use-case"
 import { UpdateReservationUseCase } from "@hotel/domain/src/use-cases/update-reservation.use-case"
-import { InvalidDatesError, OverlappingReservationError } from "@hotel/domain/src/errors"
+import { PatchReservationUseCase } from "@hotel/domain/src/use-cases/patch-reservation.use-case"
+
+import { InvalidDatesError, OverlappingReservationError, ReservationNotFoundError } from "@hotel/domain/src/errors"
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -93,15 +95,51 @@ app.put("/reservations/:id", async (req, res) => {
     })
   } catch (err: any) {
     // Domain errors
-    if (err.name === "InvalidDatesError" || err.message.includes("Check-out date")) {
+    if (err instanceof InvalidDatesError || err.message.includes("Check-out date")) {
       return res.status(400).json({ message: err.message })
     }
-    if (err.message === "Reservation not found") {
+    if (err instanceof ReservationNotFoundError) {
       return res.status(404).json({ message: err.message })
     }
 
     console.error(err)
     return res.status(500).json({ message: "Internal server error" })
+  }
+})
+
+app.patch("/reservations/:id", async (req, res) => {
+  try {
+    const { id } = req.params
+    const { userId, roomId, checkInDate, checkOutDate, status } = req.body
+
+    const patchUseCase = new PatchReservationUseCase(repo)
+    const updatedReservation = await patchUseCase.execute({
+      id,
+      userId,
+      roomId,
+      checkInDate: checkInDate ? new Date(checkInDate) : undefined,
+      checkOutDate: checkOutDate ? new Date(checkOutDate) : undefined,
+      status
+    })
+
+    return res.status(200).json({
+      id: updatedReservation.id,
+      userId: updatedReservation.userId,
+      roomId: updatedReservation.roomId,
+      checkInDate: updatedReservation.checkInDate.toISOString(),
+      checkOutDate: updatedReservation.checkOutDate.toISOString(),
+      status: updatedReservation.status
+    })
+  } catch (err: any) {
+    if (err instanceof ReservationNotFoundError) {
+    return res.status(404).json({ message: err.message })
+  }
+    if (err instanceof InvalidDatesError) {
+      return res.status(400).json({ message: err.message })
+    }
+
+    console.error(err)
+    return res.status(500).json({ message: err.message })
   }
 })
 
