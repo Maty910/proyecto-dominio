@@ -1,3 +1,5 @@
+import { InvalidDatesError } from "../errors";
+
 export type ReservationStatus = "pending" | "confirmed" | "cancelled"
 
 interface ReservationProps {
@@ -19,7 +21,7 @@ export class Reservation {
 
   constructor(props: ReservationProps) {
     if (props.checkOutDate <= props.checkInDate) {
-      throw new Error("Check-Out date must be after Check-In date")
+      throw new InvalidDatesError()
     }
 
     this.id = props.id;
