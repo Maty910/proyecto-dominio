@@ -90,6 +90,7 @@ GetReservationsByRoomUseCase: Lista reservas por habitación.
 DeleteReservation: Permite eliminar reservas (solo admin o dueño).
 
 # Endpoints principales
+Se ultilizó Postman para probar todos los endpoints
 ## Autenticación
 
 ### POST /auth/register
