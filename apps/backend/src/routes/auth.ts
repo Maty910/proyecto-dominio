@@ -31,13 +31,28 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body
-    if (!email ||  !password) return res.status(400).json({ message: "Missing fields" })
+    if (!email || !password) {
+      return res.status(400).json({ message: "Missing fields" })
+    }
     
     const user = await userRepo.findByEmail(email)
-    if (!user) return res.status(401).json({ message: "Invalid credentials" })
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" })
+    }
 
-    const token = jwt.sign({ sub: user.id, role: user.role, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES })
+    const validPassword = await bcrypt.compare(password, user.passwordHash)
+    if (!validPassword) {
+      return res.status(401).json({ message: "Invalid password" })
+    }
+
+    const token = jwt.sign(
+      { sub: user.id, role: user.role, email: user.email },
+      JWT_SECRET, 
+      { expiresIn: JWT_EXPIRES }
+    )
+    
     return res.json({ token })
+
   } catch (err) {
     console.error(err)
     return res.status(500).json({ message: "Internal server error" })

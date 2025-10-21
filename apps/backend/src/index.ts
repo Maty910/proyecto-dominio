@@ -1,5 +1,8 @@
 import express from 'express'
 
+import authRoutes from './routes/auth'
+import { authMiddleware } from './middlewares/auth'
+
 import { Reservation } from "@hotel/domain/src/entities/Reservation"
 import { InMemoryReservationRepository } from "@hotel/domain/src/services/InMemoryReservationRepository"
 import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
@@ -12,6 +15,7 @@ import { InvalidDatesError, OverlappingReservationError, ReservationNotFoundErro
 const app = express()
 const port = process.env.PORT || 3000
 app.use(express.json())
+app.use("/auth", authRoutes)
 
 const repo = new InMemoryReservationRepository()
 const createReservation = new CreateReservationUseCase(repo)
@@ -24,9 +28,15 @@ app.get("/reservations/:roomId", async (req, res) => {
   res.json(reservations)
 })
 
-app.post("/reservations", async (req, res) => {
+app.get("/reservations", authMiddleware, async (req, res) => {
+  const reservations = await repo.findAll()
+  res.json(reservations)
+})
+
+app.post("/reservations", authMiddleware, async (req: any, res) => {
   try {
-    const { id, userId, roomId, checkInDate, checkOutDate, status } = req.body
+    const { id, roomId, checkInDate, checkOutDate, status } = req.body
+    const userId = req.user.id
 
     //basic validation & parsing dates
     if (!id || !userId || !roomId || !checkInDate || !checkOutDate || !status) {
@@ -143,7 +153,7 @@ app.patch("/reservations/:id", async (req, res) => {
   }
 })
 
-app.delete("/reservations/:id", async (req, res) => {
+app.delete("/reservations/:id", authMiddleware, async (req: any, res) => {
   const { id } = req.params
   const existing = await repo.findById(id)
 
@@ -151,6 +161,10 @@ app.delete("/reservations/:id", async (req, res) => {
     return res.status(404).json({ message: "Reservation not found" })
   }
 
+  if (req.user.role !== "admin" && req.user.id !== existing.userId) {
+    return res.status(403).json({ message: "Forbidden" })
+  }
+  
   await repo.delete(id)
   return res.status(200).json({ message: "Reservation deleted" })
 })
