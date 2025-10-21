@@ -27,7 +27,7 @@ TDD con Jest
 
 Clean Architecture + DDD
 
-#Estructura del repositorio
+# Estructura del repositorio
 proyecto-dominio/
 ├── domain/
 │   ├── src/
