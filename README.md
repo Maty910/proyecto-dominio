@@ -91,6 +91,7 @@ DeleteReservation: Permite eliminar reservas (solo admin o dueño).
 
 # Endpoints principales
 Se ultilizó Postman para probar todos los endpoints
+
 ## Autenticación
 
 ### POST /auth/register
@@ -153,3 +154,13 @@ Se aplicó TDD en los casos de uso del dominio.
 Se optó por un repositorio en memoria para simplificar las pruebas, manteniendo la interfaz UserRepository y ReservationRepository listas para una futura integración con bases de datos reales.
 
 El enfoque permitió separar claramente las reglas de negocio del entorno técnico, cumpliendo los principios de Clean Architecture.
+
+# Reflexiones 
+
+Durante el proceso de desarrollo, aplicar **arquitectura limpia** y **TDD (Test Driven Development)** me ayudó a tener el código más ordenado, con responsabilidades bien separadas y fácil de extender. Al principio me costó acostumbrarme a esta nueva manera de pensar, primero los tests y luego la implementación. Pero con la práctica empece a notar que me daba más seguridad al aplicar cambios o refactorizar. 
+
+Algo que me fue difícil fue definir los límites entre las capas y entender qué debía ir en cada una. Me resultó difícil decidir donde ubicar cierta lógica pero me ayudé con las clases y el material de las mismas.
+
+Después tuve cierta dificultad con el manejo de la autenticación con JWT y probar los endpoints en Postman. Pero pude resolverlo y repasé como gestionar la seguridad de la API y proteger endpoints.
+
+Cuando creí que había terminado, me dí cuenta que me falta probar el rol de admin en Postman. Lo probé sin problemas y repasé la lógica que implementé. Me dí cuenta que puedo agregar nuevas funcionalidades sin romper nada y de manera segura. TDD ayuda mucho a eso. Me deja tranquilo ver los tests pasar al agregar una nueva funcionalidad o una refactorización.
