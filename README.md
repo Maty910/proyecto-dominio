@@ -1,19 +1,19 @@
 # Proyecto Dominio — Sistema de Reservas de hotel con Arquitectura Limpia
 
-Este proyecto implementa un sistema de gestión de reservas de hotel, siguiendo principios de arquitectura limpia (Clean Architecture) y Domain-Driven Design (DDD).
+Este proyecto implementa un sistema de gestión de reservas de hotel, siguiendo principios de arquitectura limpia (Clean Architecture) y Test-Driven Design (TDD).
 El foco está en la separación de capas, la testabilidad y la independencia del dominio respecto a frameworks o infraestructura externa.
 
 # Arquitectura y Tecnologías
 
 El proyecto se divide en dos capas principales:
 
-domain/ → Contiene toda la lógica de negocio (entidades, casos de uso, repositorios en memoria, errores de dominio, etc).
+domain/ → Contiene toda la lógica de negocio (entidades, casos de uso, repositorios en memoria, errores de dominio y serivicios).
 
 Sin dependencias externas, completamente testeable.
 
 apps/backend/ → Capa de infraestructura con Express.js, que expone los casos de uso como endpoints REST.
 
-Stack técnico:
+# Stack técnico:
 
 Node.js + TypeScript
 
@@ -23,27 +23,27 @@ bcrypt.js (hashing de contraseñas)
 
 jsonwebtoken (autenticación JWT)
 
-TDD con Jest
+TDD con Vitest
 
-Clean Architecture + DDD
+Clean Architecture
 
 # Estructura del repositorio
-proyecto-dominio/
-├── domain/
-│   ├── src/
-│   │   ├── entities/
-│   │   ├── services/
-│   │   ├── use-cases/
-│   │   ├── errors/
-│   │   └── tests/
-├── apps/
-│   └── backend/
-│       ├── src/
-│       │   ├── routes/
-│       │   ├── middlewares/
-│       │   └── index.ts
-├── package.json
-└── README.md
+proyecto-dominio/ <br>
+├── domain/ <br>
+│   ├── src/ <br>
+│   │   ├── entities/ <br>
+│   │   ├── services/ <br>
+│   │   ├── use-cases/ <br>
+│   │   ├── errors/ <br>
+│   │   └── tests/ <br>
+├── apps/ <br>
+│   └── backend/ <br>
+│       ├── src/ <br>
+│       │   ├── routes/ <br>
+│       │   ├── middlewares/ <br>
+│       │   └── index.ts <br>
+├── package.json <br>
+└── README.md <br>
 
 # Instalación y ejecución
 1. Clonar el repositorio
