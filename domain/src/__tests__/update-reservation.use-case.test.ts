@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { InMemoryReservationRepository } from '../../services/InMemoryReservationRepository'
-import { CreateReservationUseCase } from "../create-reservation.use-case"
-import { UpdateReservationUseCase } from "../update-reservation.use-case"
+import { InMemoryReservationRepository } from '../services/InMemoryReservationRepository'
+import { CreateReservationUseCase } from "../use-cases/create-reservation.use-case"
+import { UpdateReservationUseCase } from "../use-cases/update-reservation.use-case"
 
 describe("UpdateReservationUseCase", () => {
   let repo: InMemoryReservationRepository

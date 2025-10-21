@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { InMemoryUserRepository } from '../../services/InMemoryUserRepository'
-import { RegisterUserUseCase, UserAlreadyExistsError } from '../register-user.use-case'
+import { InMemoryUserRepository } from '../services/InMemoryUserRepository'
+import { RegisterUserUseCase, UserAlreadyExistsError } from '../use-cases/register-user.use-case'
 import bcrypt from 'bcryptjs'
 
 describe("ResgusterUserUseCase", () => {

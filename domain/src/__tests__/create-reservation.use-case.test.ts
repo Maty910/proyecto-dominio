@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest"
-import { CreateReservationUseCase } from "../create-reservation.use-case"
-import { Reservation } from "../../entities/Reservation"
-import { InMemoryReservationRepository } from '../../services/InMemoryReservationRepository'
-import { InvalidDatesError, OverlappingReservationError } from "../../errors"
+import { CreateReservationUseCase } from "../use-cases/create-reservation.use-case"
+import { Reservation } from "../entities/Reservation"
+import { InMemoryReservationRepository } from '../services/InMemoryReservationRepository'
+import { InvalidDatesError, OverlappingReservationError } from "../errors"
 
 describe("CreateReservationUseCase - overlaps", () => {
   let repo: InMemoryReservationRepository;

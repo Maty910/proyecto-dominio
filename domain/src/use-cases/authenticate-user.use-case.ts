@@ -3,7 +3,7 @@ import { UserRepository } from "../services/UserRepository"
 
 export class AuthenticationError extends Error { 
   constructor(message = "Invalid credentials") {
-    super(message = "Invalid credentials")
+    super(message)
     this.name = "AuthenticationError"
   }
 }

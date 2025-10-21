@@ -19,7 +19,7 @@ export class UpdateReservationUseCase  {
   }
 
   async execute(data: UpdateReservationRequest): Promise<Reservation> {
-    // Buscar reservas existentes para la misma habitación
+    // Search existing reservation from the same room
     const reservations = await this.repo.findByRoomId(data.roomId)
     const existing = reservations.find(r => r.id === data.id)
 
@@ -27,19 +27,19 @@ export class UpdateReservationUseCase  {
       throw new Error("Reservation not found")
     }
 
-    //Validar fechas
+    // Validate dates
     if (data.checkInDate >= data.checkOutDate){
       throw new InvalidDatesError()
     }
 
-    // Verificar solapamiento con otras reservas
+    // Verify overlapping with other reservations
     for (const e of reservations) {
       if (e.id !== data.id && this.isOverlapping(data.checkInDate, data.checkOutDate, e.checkInDate, e.checkOutDate)) {
         throw new OverlappingReservationError()
       }
     }
     
-    // Actualizar la reserva existente
+    // Update existing reservation
     const updatedReservation = new Reservation({
       id: existing.id,
       userId: data.userId,

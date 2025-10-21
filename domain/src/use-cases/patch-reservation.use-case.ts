@@ -21,7 +21,7 @@ export class PatchReservationUseCase {
       throw new ReservationNotFoundError()
     }
 
-    // Aplicación de los cambios que vengan en el input
+    // Apply changes comming from the input
     const updated = new Reservation({
       id: input.id,
       userId: input.userId ?? existing.userId,

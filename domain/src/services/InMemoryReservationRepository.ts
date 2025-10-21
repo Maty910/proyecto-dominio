@@ -8,7 +8,7 @@ export class InMemoryReservationRepository implements ReservationRepository {
     const index = this.items.findIndex(r => r.id === reservation.id)
     
     if (index !== -1) {
-      // Si ya existe, reemplaza la reserva
+      // If already exists, replace reservation
       this.items[index] = reservation
     } else {
       this.items.push(reservation)

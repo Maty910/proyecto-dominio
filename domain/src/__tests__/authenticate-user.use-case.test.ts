@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { InMemoryUserRepository } from '../../services/InMemoryUserRepository'
-import { RegisterUserUseCase } from '../register-user.use-case'
-import { AuthenticateUserUseCase, AuthenticationError } from '../authenticate-user.use-case'
+import { InMemoryUserRepository } from '../services/InMemoryUserRepository'
+import { RegisterUserUseCase } from '../use-cases/register-user.use-case'
+import { AuthenticateUserUseCase, AuthenticationError } from '../use-cases/authenticate-user.use-case'
 import bcrypt from 'bcryptjs'
 
 describe("AuthenticateUserUseCase", () => {

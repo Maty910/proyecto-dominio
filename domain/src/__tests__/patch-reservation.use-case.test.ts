@@ -1,8 +1,8 @@
 import { describe, it,expect, beforeEach } from "vitest"
-import { InMemoryReservationRepository } from "../../services/InMemoryReservationRepository"
-import { Reservation } from "../../entities/Reservation"
-import { PatchReservationUseCase } from "../patch-reservation.use-case"
-import { InvalidDatesError, ReservationNotFoundError } from "../../errors"
+import { InMemoryReservationRepository } from "../services/InMemoryReservationRepository"
+import { Reservation } from "../entities/Reservation"
+import { PatchReservationUseCase } from "../use-cases/patch-reservation.use-case"
+import { InvalidDatesError, ReservationNotFoundError } from "../errors"
 
 describe("PatchReservationUseCase", () => {
   let repo: InMemoryReservationRepository

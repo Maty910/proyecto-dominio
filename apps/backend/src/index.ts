@@ -3,7 +3,6 @@ import express from 'express'
 import authRoutes from './routes/auth'
 import { authMiddleware } from './middlewares/auth'
 
-import { Reservation } from "@hotel/domain/src/entities/Reservation"
 import { InMemoryReservationRepository } from "@hotel/domain/src/services/InMemoryReservationRepository"
 import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
 import { GetReservationsByRoomUseCase } from "@hotel/domain/src/use-cases/get-reservations-by-room.use-case"
