@@ -7,22 +7,22 @@ type AuthFormProps = {
   onSubmit?: (data: FormData) => void
 }
 
-export default function AuthForm({ 
-  mode = 'login', 
-  loading = false, 
-  error, 
-  onSubmit
+export default function AuthForm({
+  mode = 'login',
+  loading = false,
+  error,
+  onSubmit,
 }: AuthFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     surname: '',
     email: '',
     password: '',
-    repeatPassword: ''
+    repeatPassword: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value})
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,12 +34,12 @@ export default function AuthForm({
   }
 
   return (
-    <form 
+    <form
       onSubmit={handleSubmit}
-      className="w-80 mx-auto mt-10 p-6 bg-white rounded-xl shadow-md flex flex-col gap-3 border border-gray-200"
+      className="card w-full max-w-md flex flex-col gap-4 mx-auto"
     >
-      <h2 className="text-2xl font-semibold text-center mb-2 text-gray-800">
-        {mode === 'login' ? 'Login' : 'Register'}
+      <h2 className="text-center">
+        {mode === 'login' ? 'Welcome! 👋' : 'Create your account'}
       </h2>
 
       {mode === 'register' && (
@@ -50,7 +50,7 @@ export default function AuthForm({
             placeholder="Name"
             value={formData.name}
             onChange={handleChange}
-            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none"
+            className="input-field"
           />
           <input
             name="surname"
@@ -58,7 +58,7 @@ export default function AuthForm({
             placeholder="Surname"
             value={formData.surname}
             onChange={handleChange}
-            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none"
+            className="input-field"
           />
         </>
       )}
@@ -69,7 +69,7 @@ export default function AuthForm({
         placeholder="Email"
         value={formData.email}
         onChange={handleChange}
-        className="border p-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none"
+        className="input-field"
       />
 
       <input
@@ -78,7 +78,7 @@ export default function AuthForm({
         placeholder="Password"
         value={formData.password}
         onChange={handleChange}
-        className="border p-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none"
+        className="input-field"
       />
 
       {mode === 'register' && (
@@ -88,27 +88,25 @@ export default function AuthForm({
           placeholder="Repeat password"
           value={formData.repeatPassword}
           onChange={handleChange}
-          className="border p-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none"
+          className="input-field"
         />
       )}
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <p className="text-danger text-sm">{error}</p>}
 
       <button
         type="submit"
         disabled={loading}
-        className={`${
-          loading
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-blue-600 hover:bg-blue-700'
-        } text-white font-semibold py-2 rounded-md mt-2 transition-colors`}
+        className={`btn-primary mt-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
       >
-        {loading
-          ? 'Loading...'
-          : mode === 'login'
-          ? 'Login'
-          : 'Register'}
+        {loading ? 'Loading...' : mode === 'login' ? 'Login' : 'Register'}
       </button>
+
+      <p className="caption text-center mt-2">
+        {mode === 'login'
+          ? "Don't have an account? Register now"
+          : 'Already have an account? Login here'}
+      </p>
     </form>
   )
 }
