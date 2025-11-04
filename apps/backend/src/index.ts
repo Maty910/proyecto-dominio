@@ -3,6 +3,8 @@ import express from 'express'
 import authRoutes from './routes/auth'
 import { authMiddleware } from './middlewares/auth'
 
+import { rooms } from "./data/rooms"
+
 import { InMemoryReservationRepository } from "@hotel/domain/src/services/InMemoryReservationRepository"
 import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
 import { GetReservationsByRoomUseCase } from "@hotel/domain/src/use-cases/get-reservations-by-room.use-case"
@@ -11,14 +13,21 @@ import { PatchReservationUseCase } from "@hotel/domain/src/use-cases/patch-reser
 
 import { InvalidDatesError, OverlappingReservationError, ReservationNotFoundError } from "@hotel/domain/src/errors"
 
+import cors from "cors" 
+
 const app = express()
 const port = process.env.PORT || 3000
+app.use(cors())
 app.use(express.json())
 app.use("/auth", authRoutes)
 
 const repo = new InMemoryReservationRepository()
 const createReservation = new CreateReservationUseCase(repo)
 const getReservationsByRoom = new GetReservationsByRoomUseCase(repo)
+
+app.get("/rooms", (req, res) => {
+  res.json(rooms)
+})
 
 app.get("/reservations/:roomId", async (req, res) => {
   const { roomId } = req.params

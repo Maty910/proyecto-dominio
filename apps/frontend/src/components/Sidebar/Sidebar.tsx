@@ -1,4 +1,5 @@
-import { X } from 'lucide-react'
+import { X } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
 
 type SidebarProps = {
   open: boolean
@@ -6,48 +7,90 @@ type SidebarProps = {
 }
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
-  if (!open) return null
+  const navigate = useNavigate()
+  const token = localStorage.getItem("token")
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    navigate("/")
+    onClose()
+  }
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Overlay */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 z-40 ${
+          open ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
       />
 
-      {/* Sidebar panel */}
+      {/* Sidebar */}
       <aside
-        className="fixed top-0 left-0 h-full w-64 bg-surface/80 backdrop-blur-xl shadow-xl border-r border-gray-200 
-                  z-50 p-6 transform transition-transform duration-300 ease-out animate-slide-in"
+        className={`fixed top-0 right-0 h-full w-64 bg-surface text-secondary shadow-lg z-50 transform transition-transform duration-300 ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-secondary hover:text-primary transition"
-          aria-label="Close menu"
-        >
-          <X size={22} />
-        </button>
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-primary">Menu</h2>
+          <button
+            onClick={onClose}
+            className="text-secondary hover:text-primary transition"
+          >
+            <X size={24} />
+          </button>
+        </div>
 
-        <nav className="mt-10 space-y-4">
-          <a href="#" className="block text-secondary hover:text-primary font-medium">
+        <nav className="flex flex-col p-6 space-y-4 text-lg font-medium">
+          <Link
+            to="/"
+            onClick={onClose}
+            className="hover:text-primary transition"
+          >
             Home
-          </a>
-          <a href="#" className="block text-secondary hover:text-primary font-medium">
+          </Link>
+          <Link
+            to="/rooms"
+            onClick={onClose}
+            className="hover:text-primary transition"
+          >
             Rooms
-          </a>
-          <a href="#" className="block text-secondary hover:text-primary font-medium">
+          </Link>
+          <a href="#" className="hover:text-primary transition">
             About
           </a>
-          <a href="#" className="block text-secondary hover:text-primary font-medium">
+          <a href="#" className="hover:text-primary transition">
             Contact
           </a>
 
-          <div className="mt-8 border-t border-gray-200 pt-4 space-y-2">
-            <button className="btn-primary w-full">Login</button>
-            <button className="btn-secondary w-full">Register</button>
-          </div>
+          <div className="border-t border-gray-300 my-4"></div>
+
+          {token ? (
+            <button
+              onClick={handleLogout}
+              className="btn-secondary text-sm px-3 py-2"
+            >
+              Log out
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                onClick={onClose}
+                className="btn-primary text-sm px-3 py-2 text-center"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={onClose}
+                className="btn-secondary text-sm px-3 py-2 text-center"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </nav>
       </aside>
     </>

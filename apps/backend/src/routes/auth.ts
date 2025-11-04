@@ -15,18 +15,27 @@ const JWT_EXPIRES = "4h"
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, role } = req.body
+    const { name, surname, email, password, role } = req.body
     if (!email || !password) return res.status(400).json({ message: "Missing fields" })
 
     const passwordHash = await bcrypt.hash(password, 10)
     const user = await registerUser.execute(email, passwordHash, role ?? "customer")
-    return res.status(201).json({ id: user.id, email: user.email, role: user.role })
+    
+    return res.status(201).json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      name,
+      surname
+    })
   } catch (err: any) {
-    if (err.name === "UserAlreadyExistsError") return res.status(409).json({ message: err.message }) 
+    if (err.name === "UserAlreadyExistsError")
+      return res.status(409).json({ message: err.message })
     console.error(err)
     return res.status(500).json({ message: "Internal server error" })
   }
 })
+
 
 router.post("/login", async (req, res) => {
   try {

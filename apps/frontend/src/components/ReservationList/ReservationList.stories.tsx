@@ -1,20 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react'
+import ReservationList from './ReservationList'
 
-const meta: Meta = {
-  title: 'Reservations/ReservationList',
-  component: () => <div>ReservationList placeholder</div>,
-  parameters: { layout: 'fullscreen' },
-};
+const meta: Meta<typeof ReservationList> = { title: 'Reservations/ReservationList', component: ReservationList }
+export default meta
+type Story = StoryObj<typeof ReservationList>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-export const WithData: Story = {
-  args: {
-    reservations: [
-      { id: 1, guest: 'Juan Pérez', date: '2025-11-01', room: 101 },
-      { id: 2, guest: 'Lucía Gómez', date: '2025-11-05', room: 203 },
-    ],
-  },
-};
+export const Default: Story = { args: { reservations: [] } }
+export const WithData: Story = { args: { reservations: [{ id:"1", userId:"u1", roomId:"101", checkInDate: new Date().toISOString(), checkOutDate: new Date(Date.now()+86400000).toISOString(), status:"confirmed"}] } }

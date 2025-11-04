@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 type AuthFormProps = {
   mode?: 'login' | 'register'
@@ -14,11 +15,11 @@ export default function AuthForm({
   onSubmit,
 }: AuthFormProps) {
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
-    email: '',
-    password: '',
-    repeatPassword: '',
+    name: "",
+    surname: "",
+    email: "",
+    password: "",
+    repeatPassword: "",
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,10 +40,10 @@ export default function AuthForm({
       className="card w-full max-w-md flex flex-col gap-4 mx-auto"
     >
       <h2 className="text-center">
-        {mode === 'login' ? 'Welcome! 👋' : 'Create your account'}
+        {mode === "login" ? "Welcome! 👋" : "Create your account"}
       </h2>
 
-      {mode === 'register' && (
+      {mode === "register" && (
         <>
           <input
             name="name"
@@ -81,7 +82,7 @@ export default function AuthForm({
         className="input-field"
       />
 
-      {mode === 'register' && (
+      {mode === "register" && (
         <input
           name="repeatPassword"
           type="password"
@@ -97,15 +98,27 @@ export default function AuthForm({
       <button
         type="submit"
         disabled={loading}
-        className={`btn-primary mt-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+        className={`btn-primary mt-2 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
       >
-        {loading ? 'Loading...' : mode === 'login' ? 'Login' : 'Register'}
+        {loading ? "Loading..." : mode === "login" ? "Login" : "Register"}
       </button>
 
-      <p className="caption text-center mt-2">
-        {mode === 'login'
-          ? "Don't have an account? Register now"
-          : 'Already have an account? Login here'}
+      <p className="caption text-center mt-2 text-muted-foreground">
+        {mode === "login" ? (
+          <>
+            Don’t have an account?{" "}
+            <Link to="/register" className="text-primary hover:underline">
+              Register now
+            </Link>
+          </>
+        ) : (
+          <>
+            Already have an account?{" "}
+            <Link to="/login" className="text-primary hover:underline">
+              Login here
+            </Link>
+          </>
+        )}
       </p>
     </form>
   )
