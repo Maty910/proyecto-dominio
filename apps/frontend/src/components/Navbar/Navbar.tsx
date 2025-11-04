@@ -39,6 +39,9 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-6 text-secondary font-medium">
             <Link to="/" className="hover:text-primary transition">Home</Link>
             <Link to="/rooms" className="hover:text-primary transition">Rooms</Link>
+            {token && (
+              <Link to="/reservations" className="hover:text-primary transition">Reservations</Link>
+            )}
             <Link to="/about" className="hover:text-primary transition">About</Link>
             <Link to="/contact" className="hover:text-primary transition">Contact</Link>
 

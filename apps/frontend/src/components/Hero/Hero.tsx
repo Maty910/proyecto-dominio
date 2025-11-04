@@ -7,9 +7,9 @@ export function Hero() {
   return (
     <section
       className="relative bg-cover bg-center h-[80vh] flex flex-col justify-center items-center text-center text-white"
-      style={{ backgroundImage: `url('../../assets/Hotel.avif')` }}
+      style={{ backgroundImage: `url('../../assets/Hotel.jpg')` }}
     >
-      <div className="bg-black bg-opacity-50 absolute inset-0"></div>
+      <div className="bg-transparent bg-opacity-50 absolute inset-0"></div>
       <div className="relative z-10 max-w-2xl">
         <h1 className="text-5xl font-bold mb-4">Welcome to Hotel Now</h1>
         <p className="text-lg mb-8">

@@ -57,12 +57,29 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           >
             Rooms
           </Link>
-          <a href="#" className="hover:text-primary transition">
+          { token && (
+            <Link
+              to="/reservations"
+              onClick={onClose}
+              className="hover:text-primary transition"
+            >
+              Reservations
+            </Link>
+          )}
+          <Link
+            to="/about"
+            onClick={onClose}
+            className="hover:text-primary transition"
+            >
             About
-          </a>
-          <a href="#" className="hover:text-primary transition">
+          </Link>
+          <Link
+            to="/contact"
+            onClick={onClose}
+            className="hover:text-primary transition"
+            >
             Contact
-          </a>
+          </Link>
 
           <div className="border-t border-gray-300 my-4"></div>
 

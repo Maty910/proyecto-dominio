@@ -1,12 +1,7 @@
 import type { ChangeEvent, FormEvent } from "react"
 import { useState } from "react"
-import type { Reservation } from "../../types/reservation"
 
-interface ReservationFormProps {
-  onAdd: (reservation: Reservation) => void
-}
-
-export default function ReservationForm({ onAdd }: ReservationFormProps) {
+export default function ReservationForm({ onAdd }: { onAdd: (reservation: any) => void }) {
   const [form, setForm] = useState({
     name: "",
     roomType: "",
@@ -14,25 +9,42 @@ export default function ReservationForm({ onAdd }: ReservationFormProps) {
     checkOut: "",
   })
 
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
+    setError("")
+    setSuccess("")
   }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!form.name || !form.roomType || !form.checkIn || !form.checkOut) return
 
-    // 👇 Creamos una reserva tipada correctamente
-    const newReservation: Reservation = {
-      id: Date.now().toString(),
-      name: form.name,
-      roomType: form.roomType,
-      checkIn: form.checkIn,
-      checkOut: form.checkOut,
+    const { name, roomType, checkIn, checkOut } = form
+
+    // Validaciones básicas
+    if (!name || !roomType || !checkIn || !checkOut) {
+      setError("Please fill in all fields.")
+      setSuccess("")
+      return
     }
 
+    // Validación de fechas
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      setError("Check-out date must be after check-in date.")
+      setSuccess("")
+      return
+    }
+
+    // Si todo está bien, crear reserva
+    const newReservation = { ...form, id: Date.now().toString() }
     onAdd(newReservation)
+
+    // Limpiar formulario
     setForm({ name: "", roomType: "", checkIn: "", checkOut: "" })
+    setError("")
+    setSuccess("Reservation created successfully ✅")
   }
 
   return (
@@ -80,7 +92,13 @@ export default function ReservationForm({ onAdd }: ReservationFormProps) {
           value={form.checkOut}
           onChange={handleChange}
           className="border rounded-lg px-3 py-2"
+          // 🔒 Esto impide elegir una fecha anterior en el selector del calendario
+          min={form.checkIn || ""}
         />
+
+        {/* Mensajes de validación */}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        {success && <p className="text-green-600 text-sm mt-2">{success}</p>}
 
         <button
           type="submit"
