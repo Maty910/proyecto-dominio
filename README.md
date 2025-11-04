@@ -1,6 +1,6 @@
 # Proyecto Dominio, Backend y Frontend — Sistema de Reservas de hotel con Arquitectura Limpia
 
-Este proyecto implementa un sistema full-stack de gestión de reservas de hotel, siguiendo principios de arquitectura limpia (Clean Architecture) y Test-Driven Development (TDD). El foco está en la separación de capas, la testabilidad y la independencia del dominio respecto a frameworks o infraestructura externa.
+Este proyecto implementa un sistema full-stack de gestión de reservas de hotel, siguiendo principios de arquitectura limpia (Clean Architecture) y Test-Driven Development (TDD). El foco está en la separación de capas, la testabilidad y la independencia del dominio respecto a frameworks o infraestructura externa. Se usó Tailwind para los estilos.
 
 ## Estructura del Proyecto
 
