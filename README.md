@@ -1,68 +1,113 @@
-# Proyecto Dominio — Sistema de Reservas de hotel con Arquitectura Limpia
+# Proyecto Dominio, Backend y Frontend — Sistema de Reservas de hotel con Arquitectura Limpia
 
-Este proyecto implementa un sistema de gestión de reservas de hotel, siguiendo principios de arquitectura limpia (Clean Architecture) y Test-Driven Design (TDD).
-El foco está en la separación de capas, la testabilidad y la independencia del dominio respecto a frameworks o infraestructura externa.
+Este proyecto implementa un sistema full-stack de gestión de reservas de hotel, siguiendo principios de arquitectura limpia (Clean Architecture) y Test-Driven Development (TDD). El foco está en la separación de capas, la testabilidad y la independencia del dominio respecto a frameworks o infraestructura externa.
 
-# Arquitectura y Tecnologías
+## Estructura del Proyecto
 
-El proyecto se divide en dos capas principales:
+El proyecto se divide en tres capas principales:
 
-domain/ → Contiene toda la lógica de negocio (entidades, casos de uso, repositorios en memoria, errores de dominio y serivicios).
+**domain/** → Contiene toda la lógica de negocio (entidades, casos de uso, repositorios en memoria, errores de dominio y servicios).
+- Sin dependencias externas, completamente testeable.
 
-Sin dependencias externas, completamente testeable.
+**apps/backend/** → Capa de infraestructura con Express.js, que expone los casos de uso como endpoints REST.
 
-apps/backend/ → Capa de infraestructura con Express.js, que expone los casos de uso como endpoints REST.
+**apps/frontend/** → Interfaz de usuario con React + Vite que consume la API del backend.
 
-# Stack técnico:
+## Tecnologías Utilizadas
 
-Node.js + TypeScript
+### Backend
+- Node.js + TypeScript
+- Express.js
+- bcrypt.js (hashing de contraseñas)
+- jsonwebtoken (autenticación JWT)
+- Vitest (testing)
 
-Express.js
+### Frontend
+- React 18
+- Vite
+- TypeScript
+- Storybook (Visual TDD)
+- Vitest + React Testing Library
 
-bcrypt.js (hashing de contraseñas)
+### Principios Aplicados
+- Clean Architecture
+- Test-Driven Development (TDD)
+- SOLID principles
 
-jsonwebtoken (autenticación JWT)
+## Arquitectura
 
-TDD con Vitest
+```
+proyecto-dominio/
+├── domain/
+│   ├── src/
+│   │   ├── entities/
+│   │   ├── services/
+│   │   ├── use-cases/
+│   │   ├── errors/
+│   │   └── tests/
+├── apps/
+│   ├── backend/
+│   │   ├── src/
+│   │   │   ├── routes/
+│   │   │   ├── middlewares/
+│   │   │   └── index.ts
+│   └── frontend/
+│       ├── src/
+│       │   ├── components/
+│       │   ├── pages/
+│       │   ├── services/
+│       │   ├── stories/
+│       │   └── types/
+│       └── .storybook/
+├── package.json
+└── README.md
+```
 
-Clean Architecture
+## Instalación
 
-# Estructura del repositorio
-proyecto-dominio/ <br>
-├── domain/ <br>
-│   ├── src/ <br>
-│   │   ├── entities/ <br>
-│   │   ├── services/ <br>
-│   │   ├── use-cases/ <br>
-│   │   ├── errors/ <br>
-│   │   └── tests/ <br>
-├── apps/ <br>
-│   └── backend/ <br>
-│       ├── src/ <br>
-│       │   ├── routes/ <br>
-│       │   ├── middlewares/ <br>
-│       │   └── index.ts <br>
-├── package.json <br>
-└── README.md <br>
+**Prerrequisitos:**
+- Node.js v16 o superior
+- pnpm
 
-# Instalación y ejecución
-1. Clonar el repositorio
+**1. Clonar el repositorio**
+```bash
 git clone https://github.com/Maty910/proyecto-dominio.git
 cd proyecto-dominio
+```
 
-2. Instalar dependencias
-npm install
+**2. Instalar dependencias**
+```bash
+pnpm install
+```
 
-3. Compilar (si usás TypeScript)
-npm run build
+## Ejecutar el Proyecto
 
-4. Ejecutar el backend
-npm run dev
+### Backend
 
+```bash
+# Modo desarrollo
+pnpm run dev:backend
 
-El servidor se levanta en:
+# El servidor se levanta en: http://localhost:3000
+```
 
-http://localhost:3000
+### Frontend
+
+```bash
+# Modo desarrollo
+pnpm run dev:frontend
+
+# La aplicación se levanta en: http://localhost:5173
+```
+
+### Storybook (Visual TDD)
+
+```bash
+# Ejecutar Storybook
+pnpm run storybook
+
+# Storybook se ejecuta en: http://localhost:6006
+```
 
 # Autenticación (JWT)
 
@@ -93,6 +138,50 @@ DeleteReservation: Permite eliminar reservas (solo admin o dueño).
 Se ultilizó Postman para probar todos los endpoints
 
 ## Autenticación
+
+La autenticación se maneja mediante JSON Web Tokens (JWT). Cada usuario debe registrarse y luego autenticarse para obtener un token. Ese token se incluye en los headers de las peticiones protegidas:
+
+```
+Authorization: Bearer <token>
+```
+
+El middleware `authMiddleware` valida el token y añade el usuario autenticado a `req.user`.
+
+### Roles de Usuario
+
+**user**: Puede gestionar sus propias reservas.
+
+**admin**: Puede gestionar todas las reservas del sistema.
+
+## Casos de Uso
+
+### Autenticación
+- **RegisterUserUseCase**: Registra un nuevo usuario con contraseña hasheada.
+- **AuthenticateUserUseCase**: Valida credenciales y genera un JWT.
+
+### Gestión de Reservas
+- **CreateReservationUseCase**: Crea una reserva si las fechas son válidas y no se solapan.
+- **UpdateReservationUseCase**: Actualiza completamente una reserva existente.
+- **PatchReservationUseCase**: Actualiza parcialmente una reserva.
+- **GetReservationsByRoomUseCase**: Lista reservas por habitación.
+- **DeleteReservationUseCase**: Permite eliminar reservas (solo admin o dueño).
+
+## Características del Frontend
+
+- Sistema de autenticación completo (registro, login, gestión de sesión)
+- CRUD completo de reservas
+- Validación de fechas y solapamientos
+- Componentes documentados en Storybook
+- Diseño responsive
+- Arquitectura limpia con separación de responsabilidades
+
+## Flujo de Comunicación
+
+```
+Frontend (React) → API Services → HTTP/REST → Backend (Express) → Use Cases → Domain Logic
+```
+
+El frontend se comunica con el backend mediante servicios HTTP que consumen los endpoints REST.
 
 ### POST /auth/register
 
@@ -145,13 +234,19 @@ Requiere token
 
 Solo admin o dueño de la reserva.
 
-# Decisiones técnicas y aprendizajes
+## Decisiones de Diseño
 
-Se priorizó la independencia del dominio, evitando dependencias directas con Express o JWT en la lógica de negocio.
+**Independencia del Dominio**
+Se priorizó la independencia del dominio, evitando dependencias directas con Express, React o JWT en la lógica de negocio.
 
-Se aplicó TDD en los casos de uso del dominio.
+**Repositorios en Memoria**
+Se optó por repositorios en memoria para simplificar las pruebas, manteniendo las interfaces `UserRepository` y `ReservationRepository` listas para una futura integración con bases de datos reales.
 
-Se optó por un repositorio en memoria para simplificar las pruebas, manteniendo la interfaz UserRepository y ReservationRepository listas para una futura integración con bases de datos reales.
+**Visual TDD con Storybook**
+Se implementó Storybook para desarrollar componentes de forma aislada, permitiendo documentación visual automática y testing de estados y variantes antes de la integración.
+
+**Separación Frontend/Backend**
+El frontend y backend se ejecutan de forma independiente en puertos diferentes, permitiendo desarrollo paralelo y facilitando el escalado.
 
 El enfoque permitió separar claramente las reglas de negocio del entorno técnico, cumpliendo los principios de Clean Architecture.
 
@@ -164,3 +259,9 @@ Algo que me fue difícil fue definir los límites entre las capas y entender qu�
 Después tuve cierta dificultad con el manejo de la autenticación con JWT y probar los endpoints en Postman. Pero pude resolverlo y repasé como gestionar la seguridad de la API y proteger endpoints.
 
 Cuando creí que había terminado, me dí cuenta que me falta probar el rol de admin en Postman. Lo probé sin problemas y repasé la lógica que implementé. Me dí cuenta que puedo agregar nuevas funcionalidades sin romper nada y de manera segura. TDD ayuda mucho a eso. Me deja tranquilo ver los tests pasar al agregar una nueva funcionalidad o una refactorización.
+
+En cuanto al frontend, me gustó mucho usar storybook. Tuve dificultades para hacerlo funcionar al comienzo ya que era la primera vez que lo utilizaba. Pero al final me pareció una herramienta muy útil y cómoda de usar
+
+## Autor
+
+**Matías** - [@Maty910](https://github.com/Maty910)
