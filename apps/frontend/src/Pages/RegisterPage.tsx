@@ -1,44 +1,52 @@
-import { useState } from 'react'
-import AuthForm from '../components/AuthForm/AuthForm'
-import { register } from '../services/api'
+import { useEffect, useState } from "react"
+import ReservationForm from "../components/ReservationForm/ReservationForm"
+import ReservationList from "../components/ReservationList/ReservationList"
+import { getReservations } from "../services/api"
+import type { Reservation } from "../types/reservation"
 
-export default function RegisterPage() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | undefined>()
+export default function ReservationsPage() {
+  const [reservations, setReservations] = useState<Reservation[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
-  const handleRegister = async (data: FormData) => {
-    const payload = {
-      name: data.get("name") as string,
-      surname: data.get("surname") as string,
-      email: data.get("email") as string,
-      password: data.get("password") as string,
-    }
-    if (payload.password !== data.get("repeatPassword")) {
-      setError("Passwords do not match")
-      return
-    }
-
-    setLoading(true)
-    setError(undefined)
-
+  async function loadReservations() {
     try {
-      await register(payload)
-      window.location.href = "/login"
+      setLoading(true)
+      const data = await getReservations()
+      setReservations(data)
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || "Failed to load reservations")
     } finally {
       setLoading(false)
     }
   }
 
+  useEffect(() => {
+    loadReservations()
+  }, [])
+
+  const handleAdd = (newReservation: Reservation) => {
+    setReservations((prev) => [...prev, newReservation])
+  }
+
+  const handleRemove = (id: string) => {
+    setReservations((prev) => prev.filter((r) => r.id !== id))
+  }
+
   return (
-    <main className="flex items-center justify-center min-h-screen bg-background text-secondary">
-      <AuthForm
-        mode="register"
-        loading={loading}
-        error={error}
-        onSubmit={handleRegister}
-      />
+    <main className="bg-background text-secondary min-h-screen py-12 px-6">
+      <h1 className="text-3xl font-bold text-center mb-8">Reservations</h1>
+
+      {loading ? (
+        <p className="text-center">Loading...</p>
+      ) : error ? (
+        <p className="text-center text-red-600">{error}</p>
+      ) : (
+        <div className="max-w-5xl mx-auto grid gap-8 md:grid-cols-2">
+          <ReservationForm onAdd={handleAdd} />
+          <ReservationList reservations={reservations} onRemove={handleRemove} />
+        </div>
+      )}
     </main>
   )
 }

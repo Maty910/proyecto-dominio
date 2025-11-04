@@ -1,3 +1,4 @@
+import { useState } from "react"
 import type { Reservation } from "../../types/reservation"
 
 interface ReservationListProps {
@@ -6,8 +7,29 @@ interface ReservationListProps {
 }
 
 export default function ReservationList({ reservations, onRemove }: ReservationListProps) {
+  const [deleting, setDeleting] = useState("")
+
+  async function handleDelete(id: string) {
+    try {
+      setDeleting(id)
+      const token = localStorage.getItem("token")
+      const res = await fetch(`http://localhost:3000/reservations/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (!res.ok) throw new Error("Failed to delete reservation")
+      onRemove(id)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setDeleting("")
+    }
+  }
+
   if (reservations.length === 0) {
-    return <p className="text-center text-muted-foreground">No reservations yet.</p>
+    return <p className="text-center text-muted-foreground">You have no reservations yet.</p>
   }
 
   return (
@@ -20,16 +42,17 @@ export default function ReservationList({ reservations, onRemove }: ReservationL
             className="border p-4 rounded-lg flex justify-between items-center"
           >
             <div>
-              <p className="font-medium">{r.name}</p>
+              <p className="font-medium">Room ID: {r.roomId}</p>
               <p className="text-sm text-muted-foreground">
-                {r.roomType} — {r.checkIn} to {r.checkOut}
+                {r.checkInDate} → {r.checkOutDate} ({r.status})
               </p>
             </div>
             <button
-              onClick={() => onRemove(r.id)}
+              onClick={() => handleDelete(r.id)}
               className="text-red-500 hover:text-red-700"
+              disabled={deleting === r.id}
             >
-              Cancel
+              {deleting === r.id ? "Deleting..." : "Cancel"}
             </button>
           </li>
         ))}

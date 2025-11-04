@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react"
 import ReservationForm from "../components/ReservationForm/ReservationForm"
 import ReservationList from "../components/ReservationList/ReservationList"
-
-export interface Reservation {
-  id: string
-  name: string
-  roomType: string
-  checkIn: string
-  checkOut: string
-}
+import type { Reservation } from "../types/reservation"
 
 export default function ReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([])
@@ -26,9 +19,9 @@ export default function ReservationsPage() {
     setReservations([...reservations, reservation])
   }
 
-  const removeReservation = (id: string) => {
-    setReservations(reservations.filter((r) => r.id !== id))
-  }
+  const handleRemove = (id: string) => {
+  setReservations((prev) => prev.filter((r) => r.id !== id))
+}
 
   return (
     <main className="bg-background text-secondary min-h-screen py-12 px-6">
@@ -36,7 +29,7 @@ export default function ReservationsPage() {
 
       <div className="max-w-4xl mx-auto grid gap-8 md:grid-cols-2">
         <ReservationForm onAdd={addReservation} />
-        <ReservationList reservations={reservations} onRemove={removeReservation} />
+        <ReservationList reservations={reservations} onRemove={handleRemove} />
       </div>
     </main>
   )
