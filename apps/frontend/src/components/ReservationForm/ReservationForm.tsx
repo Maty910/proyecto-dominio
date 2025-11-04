@@ -1,7 +1,12 @@
 import type { ChangeEvent, FormEvent } from "react"
 import { useState } from "react"
+import type { Reservation } from "../../types/reservation"
 
-export default function ReservationForm({ onAdd }: { onAdd: (reservation: any) => void }) {
+interface ReservationFormProps {
+  onAdd: (reservation: Reservation) => void
+}
+
+export default function ReservationForm({ onAdd }: ReservationFormProps) {
   const [form, setForm] = useState({
     name: "",
     roomType: "",
@@ -17,7 +22,15 @@ export default function ReservationForm({ onAdd }: { onAdd: (reservation: any) =
     e.preventDefault()
     if (!form.name || !form.roomType || !form.checkIn || !form.checkOut) return
 
-    const newReservation = { ...form, id: Date.now() }
+    // 👇 Creamos una reserva tipada correctamente
+    const newReservation: Reservation = {
+      id: Date.now().toString(),
+      name: form.name,
+      roomType: form.roomType,
+      checkIn: form.checkIn,
+      checkOut: form.checkOut,
+    }
+
     onAdd(newReservation)
     setForm({ name: "", roomType: "", checkIn: "", checkOut: "" })
   }

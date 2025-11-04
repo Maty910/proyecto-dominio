@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import FilterBar from "../components/Rooms/FilterBar"
 import RoomsGrid from "../components/Rooms/RoomsGrid"
 import { fetchRooms } from "../services/api"
-import type { Room } from "../types"
+import type { Room } from "../types/types"
 
 export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([])

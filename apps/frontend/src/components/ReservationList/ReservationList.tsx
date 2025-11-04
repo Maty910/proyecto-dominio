@@ -1,10 +1,4 @@
-type Reservation = {
-  id: string
-  name: string
-  roomType: string
-  checkIn: string
-  checkOut: string
-}
+import type { Reservation } from "../../types/reservation"
 
 interface ReservationListProps {
   reservations: Reservation[]

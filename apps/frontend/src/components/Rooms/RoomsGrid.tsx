@@ -1,5 +1,5 @@
 import RoomCard from "./RoomCard"
-import type { Room } from "../../types"
+import type { Room } from "../../types/types"
 
 type RoomsGridProps = {
   rooms: Room[]

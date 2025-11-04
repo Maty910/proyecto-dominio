@@ -5,7 +5,7 @@ import RoomsGrid from "../components/Rooms/RoomsGrid"
 import { Features } from "../components/Features/Features"
 import { CallToAction } from "../components/CTA/CallToAction"
 import { fetchRooms } from "../services/api"
-import type { Room } from "../types"
+import type { Room } from "../types/types"
 
 export default function HomePage() {
   const [rooms, setRooms] = useState<Room[]>([])
