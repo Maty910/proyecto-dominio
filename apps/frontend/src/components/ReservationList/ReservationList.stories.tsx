@@ -6,4 +6,4 @@ export default meta
 type Story = StoryObj<typeof ReservationList>
 
 export const Default: Story = { args: { reservations: [] } }
-export const WithData: Story = { args: { reservations: [{ id:"1", userId:"u1", roomId:"101", checkInDate: new Date().toISOString(), checkOutDate: new Date(Date.now()+86400000).toISOString(), status:"confirmed"}] } }
+export const WithData: Story = { args: { reservations: [{ id:"1", roomId:"101", checkInDate: new Date().toISOString(), checkOutDate: new Date(Date.now()+86400000).toISOString(), status:"confirmed"}] } }

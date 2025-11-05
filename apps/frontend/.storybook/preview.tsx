@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import { BrowserRouter } from "react-router-dom";
 import '../src/index.css';
 
 const preview: Preview = {
@@ -8,12 +9,19 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
-      expanded: true, // ← Movido aquí
+      expanded: true,
     },
     a11y: {
       test: 'todo'
     }
   },
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    ),
+  ],
 };
 
 export default preview;

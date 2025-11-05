@@ -1,4 +1,4 @@
-import RoomCard from "./RoomCard"
+import RoomCard from "../RoomCard/RoomCard"
 import type { Room } from "../../types/types"
 
 type RoomsGridProps = {

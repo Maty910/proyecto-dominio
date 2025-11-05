@@ -69,17 +69,45 @@ export async function login(email: string, password: string) {
   return data
 }
 
-export async function register(data: {
-  name: string
-  surname: string
-  email: string
-  password: string
-}) {
-  const res = await fetch(`${API_URL}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+export const register = async (email: string, password: string, role: string) => {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, role }),
   })
-  if (!res.ok) throw new Error("Registration failed")
-  return res.json()
+
+  if (!response.ok) {
+    throw new Error('Error registering user');
+  }
+
+  return response.json();
+}
+
+export const fetchReservations = async () => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/reservations`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Error fetching reservations');
+  }
+
+  return response.json();
+}
+
+export const deleteReservation = async (id: string) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/reservations/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Error deleting reservation');
+  }
 }

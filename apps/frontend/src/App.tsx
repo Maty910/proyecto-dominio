@@ -2,11 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import MainLayout from "./components/Layout/MainLayout"
 import HomePage from "./Pages/HomePage"
 import LoginPage from "./Pages/LoginPage"
-import RegisterPage from "./Pages/RegisterPage"
+import { RegisterPage } from "./Pages/RegisterPage"
 import RoomsPage from "./Pages/RoomsPage"
 import ContactPage from "./Pages/ContactPage"
 import AboutPage from "./Pages/AboutPage"
-import ReservationsPage from "./Pages/ReservationsPage"
+import { ReservationsPage } from "./Pages/ReservationsPage"
 
 export default function App() {
   return (
