@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { deleteReservation } from "../../services/api"
 import type { Reservation } from "../../types/reservation"
 
 interface ReservationListProps {
@@ -12,17 +13,11 @@ export default function ReservationList({ reservations, onRemove }: ReservationL
   async function handleDelete(id: string) {
     try {
       setDeleting(id)
-      const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:3000/reservations/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      if (!res.ok) throw new Error("Failed to delete reservation")
+      await deleteReservation(id)
       onRemove(id)
     } catch (err) {
       console.error(err)
+      alert('Error deleting reservation')
     } finally {
       setDeleting("")
     }
