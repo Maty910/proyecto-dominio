@@ -37,7 +37,7 @@ export const ReservationsPage = () => {
     e.preventDefault()
     try {
       await createReservation({
-        id: '',
+        id: "",
         roomId,
         checkInDate,
         checkOutDate,

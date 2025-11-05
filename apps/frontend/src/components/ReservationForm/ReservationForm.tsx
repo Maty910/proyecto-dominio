@@ -36,17 +36,22 @@ export default function ReservationForm({ onAdd }: { onAdd: (reservation: Reserv
 
     try {
       setLoading(true)
+      
+      const reservationId = `rsv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      
       const newReservation = await createReservation({
-        id: Date.now().toString(),
+        id: reservationId,
         roomId,
         checkInDate,
         checkOutDate,
         status: "confirmed",
-      })
+      } as Reservation)
+      
       onAdd(newReservation)
       setSuccess("Reservation created successfully ✅")
       setForm({ roomId: "", checkInDate: "", checkOutDate: "", status: "confirmed" })
     } catch (err: any) {
+      console.error('Error creating reservation:', err)
       setError(err.message || "Failed to create reservation")
     } finally {
       setLoading(false)

@@ -7,7 +7,7 @@ export async function fetchRooms() {
     }
   })
 
-  if (!res.ok) throw new Error("Error fetching reservations")
+  if (!res.ok) throw new Error("Error fetching rooms")
   
   return res.json()
 }
@@ -89,7 +89,7 @@ export const fetchReservations = async () => {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
-  });
+  })
 
   if (!response.ok) {
     throw new Error('Error fetching reservations');

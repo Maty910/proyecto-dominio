@@ -13,6 +13,8 @@ import { PatchReservationUseCase } from "@hotel/domain/src/use-cases/patch-reser
 
 import { InvalidDatesError, OverlappingReservationError, ReservationNotFoundError } from "@hotel/domain/src/errors"
 
+import { randomUUID } from "crypto"
+
 import cors from "cors" 
 
 const app = express()
@@ -43,8 +45,10 @@ app.get("/reservations", authMiddleware, async (req, res) => {
 
 app.post("/reservations", authMiddleware, async (req: any, res) => {
   try {
-    const { id, roomId, checkInDate, checkOutDate, status } = req.body
+    const { roomId, checkInDate, checkOutDate, status } = req.body
     const userId = req.user.id
+
+    const id = randomUUID()
 
     //basic validation & parsing dates
     if (!id || !userId || !roomId || !checkInDate || !checkOutDate || !status) {
