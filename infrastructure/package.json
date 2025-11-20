@@ -1,0 +1,23 @@
+{
+  "name": "@hotel/infrastructure",
+  "version": "1.0.0",
+  "description": "Capa de infraestructura - Implementaciones de persistencia",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@hotel/domain": "workspace:*",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/pg": "^8.11.10",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
+  }
+}

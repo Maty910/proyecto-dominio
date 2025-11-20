@@ -1,0 +1,118 @@
+services:
+  # PostgreSQL - Base de datos de producción
+  db:
+    image: postgres:15-alpine
+    container_name: hotel-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - hotel-db-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL - Base de datos para tests
+  db-test:
+    image: postgres:15-alpine
+    container_name: hotel-db-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_TEST_USER}
+      POSTGRES_PASSWORD: ${DB_TEST_PASSWORD}
+      POSTGRES_DB: ${DB_TEST_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - hotel-db-test-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_TEST_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+      target: development
+    container_name: hotel-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_TEST_HOST: ${DB_TEST_HOST}
+      DB_TEST_PORT: 5432
+      DB_TEST_USER: ${DB_TEST_USER}
+      DB_TEST_PASSWORD: ${DB_TEST_PASSWORD}
+      DB_TEST_NAME: ${DB_TEST_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      db-test:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    volumes:
+      # Montar código fuente para hot reload
+      - ./domain:/app/domain:ro
+      - ./apps/backend:/app/apps/backend:ro
+      - ./infrastructure:/app/infrastructure:ro
+      # Evitar que node_modules se sobrescriba
+      - /app/node_modules
+      - /app/domain/node_modules
+      - /app/apps/backend/node_modules
+      - /app/infrastructure/node_modules
+    command: pnpm --filter @hotel/backend dev
+
+  # Frontend (React + Vite)
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      target: development
+    container_name: hotel-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - hotel-network
+    volumes:
+      - ./apps/frontend:/app/apps/frontend:ro
+      - /app/apps/frontend/node_modules
+    command: pnpm --filter @hotel/frontend dev --host 0.0.0.0
+
+networks:
+  hotel-network:
+    driver: bridge
+
+volumes:
+  hotel-db-data:
+    driver: local
+  hotel-db-test-data:
+    driver: local
