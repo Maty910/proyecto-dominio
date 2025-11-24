@@ -8,10 +8,10 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
     },
-    pool: 'threads',
+    pool: 'forks',
     poolOptions: {
-      threads: {
-        singleThread: true
+      forks: {
+        singleFork: true
       }
     }
   },
