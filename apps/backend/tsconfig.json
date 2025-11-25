@@ -5,10 +5,15 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@hotel/domain/*": ["../../domain/src/*"]
+      "@hotel/domain/*": ["../../domain/src/*"],
+      "@hotel/infrastructure/*": ["../../infrastructure/src/*"]
     },
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../../domain" },
+    { "path": "../../infrastructure" }
+  ]
 }

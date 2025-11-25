@@ -1,11 +1,11 @@
 import express from 'express'
+import cors from 'cors'
+import { randomUUID } from "crypto"
 
-import authRoutes from './routes/auth'
-import { authMiddleware } from './middlewares/auth'
+import { getDatabasePool, closeDatabasePool } from './config/database'
 
-import { rooms } from "./data/rooms"
+import { PostgresReservationRepository } from "@hotel/infrastructure/persistence/postgres/repositories/PostgresReservationRepository"
 
-import { InMemoryReservationRepository } from "@hotel/domain/src/services/InMemoryReservationRepository"
 import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
 import { GetReservationsByRoomUseCase } from "@hotel/domain/src/use-cases/get-reservations-by-room.use-case"
 import { UpdateReservationUseCase } from "@hotel/domain/src/use-cases/update-reservation.use-case"
@@ -13,19 +13,32 @@ import { PatchReservationUseCase } from "@hotel/domain/src/use-cases/patch-reser
 
 import { InvalidDatesError, OverlappingReservationError, ReservationNotFoundError } from "@hotel/domain/src/errors"
 
-import { randomUUID } from "crypto"
-
-import cors from "cors" 
+import authRoutes from './routes/auth'
+import { authMiddleware } from './middlewares/auth'
+import { rooms } from "./data/rooms"
+import { timeStamp } from 'console'
 
 const app = express()
 const port = process.env.PORT || 3000
+
 app.use(cors())
 app.use(express.json())
-app.use("/auth", authRoutes)
 
-const repo = new InMemoryReservationRepository()
+const pool = getDatabasePool()
+const repo = new PostgresReservationRepository(pool)
+
 const createReservation = new CreateReservationUseCase(repo)
 const getReservationsByRoom = new GetReservationsByRoomUseCase(repo)
+
+app.use("/auth", authRoutes)
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    database: "connected"
+  })
+})
 
 app.get("/rooms", (req, res) => {
   res.json(rooms)
@@ -39,7 +52,8 @@ app.get("/reservations/:roomId", async (req, res) => {
 })
 
 app.get("/reservations", authMiddleware, async (req, res) => {
-  const reservations = await repo.findAll()
+  const reservations = await repo.findByRoomId('')
+
   res.json(reservations)
 })
 
@@ -93,28 +107,24 @@ app.put("/reservations/:id", async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" })
     }
 
-    const updatedReservation = await new (class {
-      async run() {
-        const updateUseCase = new UpdateReservationUseCase(repo)
-        return updateUseCase.execute({
-          id,
-          userId,
-          roomId,
-          checkInDate: new Date(checkInDate),
-          checkOutDate: new Date(checkOutDate),
-          status
-        })
-      }
-    })().run()
+    const updateUseCase = new UpdateReservationUseCase(repo)
+    const updatedReservation = await updateUseCase.execute({
+        id,
+        userId,
+        roomId,
+        checkInDate: new Date(checkInDate),
+        checkOutDate: new Date(checkOutDate),
+        status
+      })
 
-    return res.status(200).json({
-      id: updatedReservation.id,
-      userId: updatedReservation.userId,
-      roomId: updatedReservation.roomId,
-      checkInDate: updatedReservation.checkInDate.toISOString(),
-      checkOutDate: updatedReservation.checkOutDate.toISOString(),
-      status: updatedReservation.status
-    })
+      return res.status(200).json({
+        id: updatedReservation.id,
+        userId: updatedReservation.userId,
+        roomId: updatedReservation.roomId,
+        checkInDate: updatedReservation.checkInDate.toISOString(),
+        checkOutDate: updatedReservation.checkOutDate.toISOString(),
+        status: updatedReservation.status
+      })
   } catch (err: any) {
     // Domain errors
     if (err instanceof InvalidDatesError || err.message.includes("Check-out date")) {
@@ -134,7 +144,7 @@ app.patch("/reservations/:id", async (req, res) => {
     const { id } = req.params
     const { userId, roomId, checkInDate, checkOutDate, status } = req.body
 
-    const patchUseCase = new PatchReservationUseCase(repo)
+    const patchUseCase = new PatchReservationUseCase(repo as any)
     const updatedReservation = await patchUseCase.execute({
       id,
       userId,
@@ -179,6 +189,12 @@ app.delete("/reservations/:id", authMiddleware, async (req: any, res) => {
   
   await repo.delete(id)
   return res.status(200).json({ message: "Reservation deleted" })
+})
+
+process.on('SIGINT', async () => {
+  console.log('SIGINT signal received: closing HTTP server...')
+  await closeDatabasePool()
+  process.exit(0)
 })
 
 app.listen(port, () => {

@@ -1,12 +1,18 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { InMemoryUserRepository } from '@hotel/domain/src/services/InMemoryUserRepository'
+
+import { getDatabasePool } from 'src/config/database'
+import { PostgresUserRepository } from '@hotel/infrastructure/persistence/postgres/repositories/PostgresUserRepository'
+
 import { RegisterUserUseCase } from '@hotel/domain/src/use-cases/register-user.use-case'
 import { AuthenticateUserUseCase } from '@hotel/domain/src/use-cases/authenticate-user.use-case'
 
 const router = Router()
-const userRepo = new InMemoryUserRepository()
+
+const pool = getDatabasePool()
+const userRepo = new PostgresUserRepository(pool)
+
 const registerUser = new RegisterUserUseCase(userRepo)
 const authUser = new AuthenticateUserUseCase(userRepo)
 

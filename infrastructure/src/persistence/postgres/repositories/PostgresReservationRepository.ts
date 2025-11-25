@@ -100,4 +100,9 @@ export class PostgresReservationRepository implements ReservationRepository {
       status: row.status
     })
   }
+
+  async delete(id: string): Promise<void> {
+    const query = 'DELETE FROM reservations WHERE id = $1'
+    await this.pool.query(query, [id])
+  }
 }
