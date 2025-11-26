@@ -7,16 +7,18 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
+# Copiamos el workspace entero (pero sin node_modules)
+COPY . .
+
 # ============================================
 # STAGE 2: Dependencies
 # ============================================
 FROM base AS dependencies
 
-COPY apps/frontend/package.json ./apps/frontend/
+ENV CI=true
 
-WORKDIR /app/apps/frontend
-
-RUN pnpm install --no-frozen-lockfile
+# Instalar solo las dependencias del frontend
+RUN pnpm install --filter frontend --workspace-root
 
 # ============================================
 # STAGE 3: Development
@@ -25,26 +27,16 @@ FROM dependencies AS development
 
 WORKDIR /app
 
-COPY apps/frontend ./apps/frontend
-
-WORKDIR /app/apps/frontend
-
 EXPOSE 5173
 
-CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]
+CMD ["pnpm", "--filter", "frontend", "dev", "--host", "0.0.0.0"]
 
 # ============================================
 # STAGE 4: Build
 # ============================================
 FROM dependencies AS build
 
-WORKDIR /app
-
-COPY apps/frontend ./apps/frontend
-
-WORKDIR /app/apps/frontend
-
-RUN pnpm run build
+RUN pnpm --filter frontend build
 
 # ============================================
 # STAGE 5: Production

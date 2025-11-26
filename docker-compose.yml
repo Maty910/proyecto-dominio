@@ -48,7 +48,7 @@ services:
     build:
       context: .
       dockerfile: docker/backend/Dockerfile
-      target: development
+      # target: backend-development
     container_name: hotel-backend
     restart: unless-stopped
     environment:
@@ -74,38 +74,40 @@ services:
         condition: service_healthy
     networks:
       - hotel-network
-    volumes:
-      # Montar código fuente para hot reload
-      - ./domain:/app/domain:ro
-      - ./apps/backend:/app/apps/backend:ro
-      - ./infrastructure:/app/infrastructure:ro
-      # Evitar que node_modules se sobrescriba
-      - /app/node_modules
-      - /app/domain/node_modules
-      - /app/apps/backend/node_modules
-      - /app/infrastructure/node_modules
-    command: pnpm --filter @hotel/backend dev
+    # volumes:
+    #   # Montar código fuente para hot reload
+    #   - ./domain:/app/domain:ro
+    #   - ./apps/backend:/app/apps/backend:ro
+    #   - ./infrastructure:/app/infrastructure:ro
+    #   # Evitar que node_modules se sobrescriba
+    #   - /app/node_modules
+    #   - /app/domain/node_modules
+    #   - /app/apps/backend/node_modules
+    #   - /app/infrastructure/node_modules
+    # command: pnpm --filter @hotel/backend dev
 
   # Frontend (React + Vite)
+# Frontend (React + Vite)
   frontend:
     build:
       context: .
       dockerfile: docker/frontend/Dockerfile
-      target: development
+      target: production  # <--- CAMBIÁ development POR production
     container_name: hotel-frontend
     restart: unless-stopped
-    environment:
-      VITE_API_URL: ${VITE_API_URL}
+    # environment:
+      # VITE_API_URL: ${VITE_API_URL} # OJO: En build de prod, las vars de entorno se inyectan AL MOMENTO DEL BUILD, no del run en Vite.
     ports:
-      - "5173:5173"
+      # - "5173:5173" # Vite dev server
+      - "80:80"       # Nginx production port
     depends_on:
       - backend
     networks:
       - hotel-network
-    volumes:
-      - ./apps/frontend:/app/apps/frontend:ro
-      - /app/apps/frontend/node_modules
-    command: pnpm --filter @hotel/frontend dev --host 0.0.0.0
+    # volumes:
+    #   - ./apps/frontend:/app/apps/frontend:ro
+    #   - /app/apps/frontend/node_modules
+    # command: pnpm --filter @hotel/frontend dev --host 0.0.0.0
 
 networks:
   hotel-network:

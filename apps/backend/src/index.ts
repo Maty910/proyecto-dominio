@@ -1,10 +1,11 @@
 import express from 'express'
 import cors from 'cors'
 import { randomUUID } from "crypto"
+import { Request, Response } from "express"
 
 import { getDatabasePool, closeDatabasePool } from './config/database'
 
-import { PostgresReservationRepository } from "@hotel/infrastructure/persistence/postgres/repositories/PostgresReservationRepository"
+import { PostgresReservationRepository } from "@hotel/infrastructure/repositories/PostgresReservationRepository"
 
 import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
 import { GetReservationsByRoomUseCase } from "@hotel/domain/src/use-cases/get-reservations-by-room.use-case"
@@ -32,7 +33,7 @@ const getReservationsByRoom = new GetReservationsByRoomUseCase(repo)
 
 app.use("/auth", authRoutes)
 
-app.get("/health", (req, res) => {
+app.get("/health", (req: Request, res: Response) => {
   res.json({
     status: "ok",
     timestamp: new Date().toISOString(),
@@ -40,24 +41,24 @@ app.get("/health", (req, res) => {
   })
 })
 
-app.get("/rooms", (req, res) => {
+app.get("/rooms", (req: Request, res: Response) => {
   res.json(rooms)
 })
 
-app.get("/reservations/:roomId", async (req, res) => {
+app.get("/reservations/:roomId", async (req: Request, res: Response) => {
   const { roomId } = req.params
   const reservations = await getReservationsByRoom.execute(roomId)
 
   res.json(reservations)
 })
 
-app.get("/reservations", authMiddleware, async (req, res) => {
+app.get("/reservations", authMiddleware, async (req: Request, res: Response) => {
   const reservations = await repo.findByRoomId('')
 
   res.json(reservations)
 })
 
-app.post("/reservations", authMiddleware, async (req: any, res) => {
+app.post("/reservations", authMiddleware, async (req: any, res: Response) => {
   try {
     const { roomId, checkInDate, checkOutDate, status } = req.body
     const userId = req.user.id
@@ -88,17 +89,17 @@ app.post("/reservations", authMiddleware, async (req: any, res) => {
     })
   } catch (err) {
     if (err instanceof InvalidDatesError) {
-      return res.status(400).json({ message: err.message })
+      return res.status(400).json({ message: (err as any) })
     }
     if (err instanceof OverlappingReservationError) {
-      return res.status(409).json({ message: err.message })
+      return res.status(409).json({ message: (err as any) })
     }
     console.error(err)
     return res.status(500).json({ message: "Internal server error" })
   }
 })
 
-app.put("/reservations/:id", async (req, res) => {
+app.put("/reservations/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const { userId, roomId, checkInDate, checkOutDate, status } = req.body
@@ -128,10 +129,10 @@ app.put("/reservations/:id", async (req, res) => {
   } catch (err: any) {
     // Domain errors
     if (err instanceof InvalidDatesError || err.message.includes("Check-out date")) {
-      return res.status(400).json({ message: err.message })
+      return res.status(400).json({ message: (err as any) })
     }
     if (err instanceof ReservationNotFoundError) {
-      return res.status(404).json({ message: err.message })
+      return res.status(404).json({ message: (err as any) })
     }
 
     console.error(err)
@@ -139,7 +140,7 @@ app.put("/reservations/:id", async (req, res) => {
   }
 })
 
-app.patch("/reservations/:id", async (req, res) => {
+app.patch("/reservations/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const { userId, roomId, checkInDate, checkOutDate, status } = req.body
@@ -164,14 +165,14 @@ app.patch("/reservations/:id", async (req, res) => {
     })
   } catch (err: any) {
     if (err instanceof ReservationNotFoundError) {
-    return res.status(404).json({ message: err.message })
+    return res.status(404).json({ message: (err as any) })
   }
     if (err instanceof InvalidDatesError) {
-      return res.status(400).json({ message: err.message })
+      return res.status(400).json({ message: (err as any) })
     }
 
     console.error(err)
-    return res.status(500).json({ message: err.message })
+    return res.status(500).json({ message: (err as any) })
   }
 })
 

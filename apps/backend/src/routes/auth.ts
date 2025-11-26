@@ -2,7 +2,7 @@ import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-import { getDatabasePool } from 'src/config/database'
+import { getDatabasePool } from '../config/database'
 import { PostgresUserRepository } from '@hotel/infrastructure/persistence/postgres/repositories/PostgresUserRepository'
 
 import { RegisterUserUseCase } from '@hotel/domain/src/use-cases/register-user.use-case'

@@ -6,7 +6,8 @@
     "baseUrl": ".",
     "paths": {
       "@hotel/domain/*": ["../../domain/src/*"],
-      "@hotel/infrastructure/*": ["../../infrastructure/src/*"]
+      "@hotel/infrastructure/*": ["../../infrastructure/src/*"],
+      "@hotel/infrastructure/repositories/*": ["../../infrastructure/src/persistence/postgres/repositories/*"]
     },
     "esModuleInterop": true,
     "skipLibCheck": true

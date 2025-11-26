@@ -1,78 +1,72 @@
-# ============================================
-# STAGE 1: Base - Dependencias comunes
-# ============================================
 FROM node:20-alpine AS base
-
-# Instalar pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
+ENV CI=true
 WORKDIR /app
 
-# Copiar archivos de configuración del workspace
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+# CAMBIO: Usamos npm directo porque corepack está dando error 503 de red
+RUN npm install -g pnpm
 
-# ============================================
-# STAGE 2: Dependencies - Instalar todas las dependencias
-# ============================================
-FROM base AS dependencies
+# -------------------------------------------------------
+# Instalar deps
+# -------------------------------------------------------
+FROM base AS deps
+COPY pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 
-# Copiar package.json de todos los workspaces
-COPY domain/package.json ./domain/
-COPY apps/backend/package.json ./apps/backend/
-COPY infrastructure/package.json ./infrastructure/
+COPY apps/backend/package.json apps/backend/
+COPY domain/package.json domain/
+COPY infrastructure/package.json infrastructure/
 
-# Instalar todas las dependencias
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
+RUN pnpm add -D typescript --filter @hotel/backend
 
-# ============================================
-# STAGE 3: Development - Entorno de desarrollo con hot reload
-# ============================================
-FROM dependencies AS development
+# -------------------------------------------------------
+# Build
+# -------------------------------------------------------
+FROM deps AS build
+COPY . .
 
-# Copiar código fuente (se montará como volumen en docker-compose)
-COPY domain ./domain
-COPY apps/backend ./apps/backend
-COPY infrastructure ./infrastructure
-COPY tsconfig.json ./
+# Fix infraestructura
+RUN sed -i 's/"build": "tsc -p"/"build": "tsc -p ."/g' infrastructure/package.json || true
 
-# Exponer puerto
-EXPOSE 3000
+RUN pnpm --filter @hotel/domain build
+RUN pnpm --filter @hotel/infrastructure build
+RUN pnpm --filter @hotel/backend build
 
-# Comando por defecto
-CMD ["pnpm", "--filter", "@hotel/backend", "dev"]
-
-# ============================================
-# STAGE 4: Build - Compilar TypeScript
-# ============================================
-FROM dependencies AS build
-
-# Copiar código fuente
-COPY domain ./domain
-COPY apps/backend ./apps/backend
-COPY infrastructure ./infrastructure
-COPY tsconfig.json ./
-
-# Compilar TypeScript
-RUN pnpm run build
-
-# ============================================
-# STAGE 5: Production - Imagen final optimizada
-# ============================================
+# -------------------------------------------------------
+# Runtime
+# -------------------------------------------------------
 FROM node:20-alpine AS production
-
-# Instalar pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
 WORKDIR /app
 
-# Copiar solo archivos necesarios
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
+# 1. Configuración
+COPY --from=build /app/pnpm-workspace.yaml ./
+COPY --from=build /app/package.json ./
+COPY --from=build /app/pnpm-lock.yaml ./
 
-ENV NODE_ENV=production
-ENV PORT=3000
+# 2. Package.json originales
+COPY --from=build /app/apps/backend/package.json ./apps/backend/
+COPY --from=build /app/domain/package.json ./domain/
+COPY --from=build /app/infrastructure/package.json ./infrastructure/
+
+# 3. Instalación básica (Usamos npm acá también para instalar pnpm)
+RUN npm install -g pnpm
+RUN pnpm install --prod --no-frozen-lockfile --filter @hotel/backend... --ignore-scripts
+
+# 4. FIX DE EMERGENCIA (USANDO NPM)
+RUN npm install uuid pg --no-save
+
+# 5. Copia del backend
+COPY --from=build /app/apps/backend/dist ./apps/backend/dist
+
+# 6. OPERACIÓN INUNDACIÓN
+# Domain
+COPY --from=build /app/domain/package.json /app/node_modules/@hotel/domain/
+COPY --from=build /app/domain/dist /app/node_modules/@hotel/domain/
+COPY --from=build /app/domain/dist /app/node_modules/@hotel/domain/src/
+# Infra
+COPY --from=build /app/infrastructure/package.json /app/node_modules/@hotel/infrastructure/
+COPY --from=build /app/infrastructure/dist /app/node_modules/@hotel/infrastructure/
+RUN find /app/node_modules/@hotel/infrastructure -type d -name "repositories" -exec cp -r {} /app/node_modules/@hotel/infrastructure/ \; || true
 
 EXPOSE 3000
-
-CMD ["node", "dist/apps/backend/src/index.js"]
+CMD ["node", "apps/backend/dist/index.js"]
