@@ -30,9 +30,10 @@ RUN pnpm --filter @hotel/infrastructure build
 # Build de backend
 RUN pnpm --filter @hotel/backend build
 
-# Verificar qué se generó en backend/dist
-RUN echo "=== Contenido de apps/backend/dist ===" && ls -laR apps/backend/dist/ || echo "ERROR: No existe dist"
+# Verificar qué se generó y encontrar index.js
+RUN echo "=== Buscando index.js ===" && find apps/backend/dist -name "index.js" -type f
 
 EXPOSE 3000
 
-CMD ["node", "apps/backend/dist/index.js"]
+# Ejecutar desde donde realmente está el archivo compilado
+CMD ["node", "apps/backend/dist/apps/backend/src/index.js"]
