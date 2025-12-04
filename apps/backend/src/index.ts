@@ -5,19 +5,23 @@ import { Request, Response } from "express"
 
 import { getDatabasePool, closeDatabasePool } from './config/database'
 
-import { PostgresReservationRepository } from "@hotel/infrastructure/repositories/PostgresReservationRepository"
+// Import simplificado desde infrastructure
+import { PostgresReservationRepository } from '@hotel/infrastructure'
 
-import { CreateReservationUseCase } from "@hotel/domain/src/use-cases/create-reservation.use-case"
-import { GetReservationsByRoomUseCase } from "@hotel/domain/src/use-cases/get-reservations-by-room.use-case"
-import { UpdateReservationUseCase } from "@hotel/domain/src/use-cases/update-reservation.use-case"
-import { PatchReservationUseCase } from "@hotel/domain/src/use-cases/patch-reservation.use-case"
-
-import { InvalidDatesError, OverlappingReservationError, ReservationNotFoundError } from "@hotel/domain/src/errors"
+// Imports simplificados desde domain
+import {
+  CreateReservationUseCase,
+  GetReservationsByRoomUseCase,
+  UpdateReservationUseCase,
+  PatchReservationUseCase,
+  InvalidDatesError,
+  OverlappingReservationError,
+  ReservationNotFoundError
+} from '@hotel/domain'
 
 import authRoutes from './routes/auth'
 import { authMiddleware } from './middlewares/auth'
 import { rooms } from "./data/rooms"
-import { timeStamp } from 'console'
 
 const app = express()
 const port = process.env.PORT || 3000

@@ -3,12 +3,14 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 import { getDatabasePool } from '../config/database'
-import { PostgresUserRepository } from '@hotel/infrastructure/persistence/postgres/repositories/PostgresUserRepository'
+import { PostgresUserRepository } from '@hotel/infrastructure/index'
 
-import { RegisterUserUseCase } from '@hotel/domain/src/use-cases/register-user.use-case'
-import { AuthenticateUserUseCase } from '@hotel/domain/src/use-cases/authenticate-user.use-case'
+import {
+  RegisterUserUseCase,
+  AuthenticateUserUseCase
+} from '@hotel/domain'
 
-const router = Router()
+const router: Router = Router()
 
 const pool = getDatabasePool()
 const userRepo = new PostgresUserRepository(pool)

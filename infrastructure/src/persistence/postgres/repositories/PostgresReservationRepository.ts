@@ -1,6 +1,5 @@
 import { Pool } from 'pg'
-import { ReservationRepository } from '@hotel/domain/src/services/ReservationRepository'
-import { Reservation } from '@hotel/domain/src/entities/Reservation'
+import { ReservationRepository, Reservation } from '@hotel/domain'
 
 /**
  * Implementación de ReservationRepository usando PostgreSQL.
