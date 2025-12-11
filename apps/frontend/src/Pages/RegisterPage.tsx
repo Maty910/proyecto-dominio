@@ -1,92 +1,61 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AuthForm from '../components/AuthForm/AuthForm'
 import { register } from '../services/api'
+import { motion } from 'framer-motion'
 
 export const RegisterPage = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState<'user' | 'admin'>('user')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string | undefined>()
   const navigate = useNavigate()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleRegister = async (data: FormData) => {
+    const name = data.get("name") as string
+    const surname = data.get("surname") as string
+    const email = data.get("email") as string
+    const password = data.get("password") as string
+    const repeatPassword = data.get("repeatPassword") as string
+
+    // Validación básica de contraseñas
+    if (password !== repeatPassword) {
+      setError("Las contraseñas no coinciden.")
+      return
+    }
+
     setLoading(true)
-    setError('')
+    setError(undefined)
 
     try {
-      await register(email, password, role)
+      // Asumimos rol 'user' por defecto para registros públicos por seguridad.
+      // Si necesitás el select de rol, habría que agregarlo a AuthForm.
+      await register(email, password, 'user', name, surname)
       navigate('/login')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error registering user');
+    } catch (err: any) {
+      console.error("Register error:", err)
+      setError(err.message || "Error al registrar el usuario.")
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-        
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
-          </div>
-        )}
+    <main className="min-h-screen flex items-center justify-center bg-slate-50 p-4 relative overflow-hidden">
+      {/* Fondo decorativo sutil */}
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-50 rounded-full blur-3xl -z-10 translate-y-1/2 translate-x-1/2" />
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Rol</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          >
-            {loading ? 'Registrando...' : 'Registrar'}
-          </button>
-        </form>
-
-        <p className="mt-4 text-center text-gray-600">
-          Do you already have an account?{' '}
-          <a href="/login" className="text-blue-500 hover:underline">
-            Log in
-          </a>
-        </p>
-      </div>
-    </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md"
+      >
+        <AuthForm
+          mode="register"
+          loading={loading}
+          error={error}
+          onSubmit={handleRegister}
+        />
+      </motion.div>
+    </main>
   )
 }

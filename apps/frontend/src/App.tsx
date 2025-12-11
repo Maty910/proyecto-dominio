@@ -7,6 +7,7 @@ import RoomsPage from "./Pages/RoomsPage"
 import ContactPage from "./Pages/ContactPage"
 import AboutPage from "./Pages/AboutPage"
 import { ReservationsPage } from "./Pages/ReservationsPage"
+import ChatAssistant from "./components/ChatAssistant/ChatAssistant"
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ChatAssistant />
     </BrowserRouter>
   )
 }

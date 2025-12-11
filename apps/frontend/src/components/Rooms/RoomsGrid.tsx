@@ -1,5 +1,6 @@
-import RoomCard from "../RoomCard/RoomCard"
+import RoomCard from "../RoomCard/RoomCard" // Ajustar ruta si RoomCard no está dentro de RoomsGrid
 import type { Room } from "../../types/types"
+import { motion } from "framer-motion"
 
 type RoomsGridProps = {
   rooms: Room[]
@@ -7,19 +8,31 @@ type RoomsGridProps = {
 
 export default function RoomsGrid({ rooms }: RoomsGridProps) {
   return (
-    <section className="py-12 bg-surface">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl font-semibold text-secondary mb-8 text-center">
-          Available Rooms
+    <section className="py-20 px-6 max-w-7xl mx-auto">
+      <div className="mb-12 text-center md:text-left">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">
+          Encontrá tu lugar ideal
         </h2>
+        <p className="text-slate-500 text-lg max-w-2xl">
+          Explorá nuestra selección de habitaciones exclusivas pensadas para tu confort y descanso.
+        </p>
+      </div>
 
-        {rooms.length === 0 ? (
-          <p className="text-center text-muted-foreground">No rooms found</p>
-        ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {rooms.map((room) => (
+      {rooms.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+          <p className="text-slate-400 text-lg">No encontramos habitaciones disponibles en este momento.</p>
+        </div>
+      ) : (
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {rooms.map((room, index) => (
+            <motion.div
+              key={room.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
               <RoomCard
-                key={room.id}
                 id={room.id}
                 title={room.title}
                 description={room.description}
@@ -29,10 +42,10 @@ export default function RoomsGrid({ rooms }: RoomsGridProps) {
                 checkInDate={room.checkInDate}
                 checkOutDate={room.checkOutDate}
               />
-            ))}
-          </div>
-        )}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </section>
   )
 }
