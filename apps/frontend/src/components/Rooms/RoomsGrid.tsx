@@ -8,7 +8,7 @@ type RoomsGridProps = {
 
 export default function RoomsGrid({ rooms }: RoomsGridProps) {
   return (
-    <section className="py-20 px-6 max-w-7xl mx-auto">
+    <section className="py-10 px-6 max-w-7xl mx-auto">
       <div className="mb-12 text-center md:text-left">
         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">
           Encontrá tu lugar ideal
@@ -35,8 +35,10 @@ export default function RoomsGrid({ rooms }: RoomsGridProps) {
               <RoomCard
                 id={room.id}
                 title={room.title}
-                description={room.description}
                 price={room.price}
+                capacity={0} 
+                description={room.description}
+                amenities={[]}
                 image={room.image}
                 status={room.status}
                 checkInDate={room.checkInDate}

@@ -103,7 +103,7 @@ export function Navbar() {
                 onClick={handleLogout}
                 className={cn(
                   "flex items-center gap-2 text-sm font-medium transition-colors",
-                  useSolidStyle ? "text-slate-500 hover:text-red-500" : "text-slate-200 hover:text-white drop-shadow-md"
+                  useSolidStyle ? "text-slate-500 hover:text-red-500" : "text-slate-500 hover:text-white drop-shadow-md"
                 )}
               >
                 <LogOut size={18} />

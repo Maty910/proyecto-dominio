@@ -132,6 +132,13 @@ export default function AuthForm({
               />
             )}
 
+            <InputGroup
+              name="role"
+              type="hidden"
+              value={isLogin ? "customer" : "admin"} // Por defecto 'customer' para login, 'admin' para registro
+              onChange={() => {}}
+            />
+
             {error && (
               <motion.div 
                 initial={{ opacity: 0, height: 0 }}

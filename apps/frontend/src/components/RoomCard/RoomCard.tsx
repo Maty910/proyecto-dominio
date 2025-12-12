@@ -1,10 +1,6 @@
-type RoomCardProps = {
-  id: string
-  title: string
-  description: string
-  price?: string
-  image?: string
-  status?: string
+import type { Room } from './../../types/types' 
+
+type RoomCardProps = Room & {
   checkInDate?: string
   checkOutDate?: string
 }
@@ -42,9 +38,9 @@ export default function RoomCard({
         {status && (
           <p
             className={`text-sm font-semibold ${
-              status === "confirmed"
+              status === "available"
                 ? "text-green-600"
-                : status === "pending"
+                : status === "maintenance"
                 ? "text-yellow-600"
                 : "text-red-600"
             }`}

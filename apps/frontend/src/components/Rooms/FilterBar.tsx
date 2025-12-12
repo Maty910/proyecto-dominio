@@ -68,7 +68,7 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
                 min={0} 
                 value={minPrice} 
                 onChange={(e) => handleMin(e.target.value)}
-                className="w-24 pl-6 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-slate-400" 
+                className="w-24 pl-6 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-teal-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-slate-400" 
               />
             </div>
             <span className="text-slate-300">-</span>
@@ -80,7 +80,7 @@ export default function FilterBar({ onFilterChange }: FilterBarProps) {
                 min={0} 
                 value={maxPrice} 
                 onChange={(e) => handleMax(e.target.value)}
-                className="w-24 pl-6 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-slate-400" 
+                className="w-24 pl-6 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-teal-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-slate-400" 
               />
             </div>
           </div>

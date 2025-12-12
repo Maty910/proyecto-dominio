@@ -1,108 +1,71 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* Configuración del Tema - Paleta Esmeralda */
 @theme {
-  --color-primary: #2A9D8F;
-  --color-secondary: #264653;
-  --color-accent: #E9C46A;
-  --color-danger: #E76F51;
-  --color-background: #F8F9FA;
-  --color-surface: #FFFFFF;
+  --color-primary: #007a55;   /* Emerald Green (El que querías) */
+  --color-secondary: #264653; /* Charcoal Blue (Para textos y contrastes) */
+  --color-accent: #E9C46A;    /* Sandy Yellow (Para detalles o destacados) */
+  --color-danger: #E76F51;    /* Burnt Sienna (Mejor que un rojo chillón) */
+  
+  --color-background: #F8F9FA; /* Gris muy clarito para el fondo general */
+  --color-surface: #FFFFFF;    /* Blanco puro para tarjetas y modales */
+  
+  --font-sans: 'Inter', sans-serif;
 }
 
+/* Estilos Base */
 @layer base {
   body {
-    @apply bg-background text-secondary font-sans;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-secondary font-sans antialiased;
   }
 
-  h1, h2, h3, h4, h5 {
-    @apply text-secondary font-semibold;
-  }
-
-  @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-@theme {
-  --color-primary: #2A9D8F;
-  --color-secondary: #264653;
-  --color-accent: #E9C46A;
-  --color-danger: #ff0000;
-  --color-background: #F8F9FA;
-  --color-surface: #FFFFFF;
+  /* Títulos consistentes */
+  h1 { @apply text-4xl font-bold text-secondary leading-tight; }
+  h2 { @apply text-3xl font-semibold text-secondary leading-snug; }
+  h3 { @apply text-2xl font-semibold text-secondary leading-snug; }
+  h4 { @apply text-xl font-medium text-secondary; }
+  h5 { @apply text-lg font-medium text-secondary; }
+  
+  p { @apply text-base text-secondary/90 leading-relaxed; }
+  
+  /* Pequeño detalle para textos de "caption" o ayudas */
+  .caption { @apply text-sm text-secondary/70; }
 }
 
-@layer base {
-  body {
-    @apply bg-background text-secondary font-sans;
-    font-family: 'Inter', sans-serif;
-  }
-
-  h1 {
-    @apply text-4xl font-bold text-secondary leading-tight;
-  }
-
-  h2 {
-    @apply text-3xl font-semibold text-secondary leading-snug;
-  }
-
-  h3 {
-    @apply text-2xl font-semibold text-secondary leading-snug;
-  }
-
-  h4 {
-    @apply text-xl font-medium text-secondary;
-  }
-
-  h5 {
-    @apply text-lg font-medium text-secondary;
-  }
-
-  h6 {
-    @apply text-base font-semibold text-secondary;
-  }
-
-  p {
-    @apply text-base text-secondary/90 leading-relaxed;
-  }
-
-  .caption {
-    @apply text-sm text-secondary/70;
-  }
-}
-
-}
-
+/* Componentes Reutilizables */
 @layer components {
-  .input-field {
-    @apply w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-800 
-    focus:outline-none focus:ring-2 focus:ring-primary transition duration-200;
-  }
-
+  /* Botón Principal (Esmeralda) */
   .btn-primary {
-    @apply bg-primary hover:bg-secondary text-white font-semibold py-2 px-4 rounded-lg 
-    transition-colors duration-200;
+    @apply bg-primary hover:bg-[#006244] text-white font-semibold py-2 px-6 rounded-lg 
+    transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer border border-transparent;
   }
 
+  /* Botón Secundario (Charcoal) */
   .btn-secondary {
-    @apply bg-secondary hover:bg-primary text-white font-semibold py-2 px-4 rounded-lg 
-    transition-colors duration-200;
+    @apply bg-secondary hover:bg-[#1a3a46] text-white font-semibold py-2 px-6 rounded-lg 
+    transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer border border-transparent;
   }
 
+  /* Inputs estandarizados */
+  .input-field {
+    @apply w-full border border-gray-300 rounded-lg px-4 py-2 text-secondary bg-white
+    placeholder:text-gray-400
+    focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition duration-200;
+  }
+
+  /* Tarjetas (Cards) */
   .card {
-    @apply bg-surface shadow-md rounded-xl p-6 border border-gray-200;
+    @apply bg-surface shadow-md hover:shadow-lg rounded-xl p-6 border border-gray-100 transition-shadow duration-300;
   }
 }
 
+/* Animaciones */
 @keyframes slide-in {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .animate-slide-in {
-  animation: slide-in 0.25s ease-out forwards;
+  animation: slide-in 0.3s ease-out forwards;
 }

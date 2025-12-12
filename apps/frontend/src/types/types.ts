@@ -1,13 +1,15 @@
 export interface Room {
   id: string
   title: string
+  type?: string
+  price: number
+  capacity: number
   description: string
-  price: string
+  amenities: string[]
   image: string // URL de la imagen
   status: 'available' | 'maintenance' | 'occupied'
   checkInDate?: string
   checkOutDate?: string
-  type?: string
 }
 
 export interface Reservation {

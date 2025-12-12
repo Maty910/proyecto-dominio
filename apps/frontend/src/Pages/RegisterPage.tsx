@@ -26,9 +26,8 @@ export const RegisterPage = () => {
     setError(undefined)
 
     try {
-      // Asumimos rol 'user' por defecto para registros públicos por seguridad.
       // Si necesitás el select de rol, habría que agregarlo a AuthForm.
-      await register(email, password, 'user', name, surname)
+      await register(email, password, 'admin', name, surname)
       navigate('/login')
     } catch (err: any) {
       console.error("Register error:", err)
