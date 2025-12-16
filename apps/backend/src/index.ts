@@ -21,7 +21,7 @@ import {
 
 import authRoutes from './routes/auth'
 import { authMiddleware } from './middlewares/auth'
-import { rooms } from "./data/rooms"
+import { MOCK_ROOMS } from "./data/rooms"
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -46,7 +46,7 @@ app.get("/health", (req: Request, res: Response) => {
 })
 
 app.get("/rooms", (req: Request, res: Response) => {
-  res.json(rooms)
+  res.json(MOCK_ROOMS)
 })
 
 app.get("/reservations/:roomId", async (req: Request, res: Response) => {

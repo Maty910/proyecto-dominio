@@ -2,7 +2,7 @@ import { Facebook, Instagram, Twitter, ArrowRight } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="bg-secondary text-white pt-18 pb-5 overflow-hidden">
+    <footer className="bg-secondary text-white pt-18 pb-5 overflow-hidden relative z-50 shadow-2xl">
       <div className="container mx-auto px-6 md:px-12">
         
         {/* 1. BIG CTA (Inspirado en Affinity) */}
