@@ -8,6 +8,8 @@ import ContactPage from "./Pages/ContactPage"
 import AboutPage from "./Pages/AboutPage"
 import { ReservationsPage } from "./Pages/ReservationsPage"
 import ChatAssistant from "./components/ChatAssistant/ChatAssistant"
+import RoomDetailsPage from "./Pages/RoomDetailsPage"
+import CheckoutPage from "./Pages/CheckoutPage"
 
 export default function App() {
   return (
@@ -16,9 +18,11 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/rooms" element={<RoomsPage />} />
+          <Route path="/rooms/:id" element={<RoomDetailsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/reservations" element={<ReservationsPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />

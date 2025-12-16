@@ -23,7 +23,7 @@ export function Hero() {
   return (
     <div className="relative h-[600px] w-full flex items-center justify-center">
       {/* IMAGEN DE FONDO */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 ">
         <img
           src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop"
           alt="Hotel Hero"
@@ -35,7 +35,7 @@ export function Hero() {
         
         {/* Títulos... (Igual que antes) */}
         <div className="space-y-4">
-          <span className="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-semibold tracking-wider border border-white/10">
+          <span className="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-sm text-white text-xs font-semibold tracking-wider border border-white/10">
             EXPERIENCIA DE LUJO
           </span>
           <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight">

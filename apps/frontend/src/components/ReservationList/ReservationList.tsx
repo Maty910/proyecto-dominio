@@ -2,6 +2,7 @@ import { useState } from "react"
 import { deleteReservation } from "../../services/api"
 import type { Reservation } from "../../types/reservation"
 import { CalendarDays, Clock, DoorOpen, Trash2, Calendar } from 'lucide-react'
+import { formatDate } from "../../../utils/dateFormatter"
 
 interface ReservationListProps {
   reservations: Reservation[]
@@ -90,7 +91,7 @@ export default function ReservationList({ reservations, onRemove }: ReservationL
               <div className="text-xs text-slate-500 uppercase font-semibold mb-1">Entrada</div>
               <div className="flex items-center gap-2 text-slate-700 font-medium">
                 <CalendarDays className="h-4 w-4 text-blue-500" />
-                {r.checkInDate}
+                {formatDate(r.checkInDate)}
               </div>
             </div>
             <div className="w-px h-8 bg-slate-200"></div>
@@ -98,7 +99,7 @@ export default function ReservationList({ reservations, onRemove }: ReservationL
               <div className="text-xs text-slate-500 uppercase font-semibold mb-1">Salida</div>
               <div className="flex items-center gap-2 text-slate-700 font-medium">
                 <Clock className="h-4 w-4 text-blue-500" />
-                {r.checkOutDate}
+                {formatDate(r.checkOutDate)}
               </div>
             </div>
           </div>

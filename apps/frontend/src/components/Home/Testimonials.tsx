@@ -25,7 +25,7 @@ export function Testimonials() {
   return (
     <section className="py-20 bg-secondary text-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">Lo que dicen nuestros huéspedes</h2>
+        <h2 className="text-3xl font-bold text-center mb-12 text-emerald-50">Lo que dicen nuestros huéspedes</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {reviews.map((review, index) => (

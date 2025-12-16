@@ -115,7 +115,7 @@ export default function RoomsPage() {
   return (
     <main className="bg-background min-h-screen flex flex-col">
       {/* Header de la sección */}
-      <section className="relative py-2 pt-6 px-4 text-center bg-gradient-to-b from-primary to-[#248f82] text-white shadow-md">
+      <section className="relative py-2 pt-6 px-4 text-center bg-linear-to-b from-primary to-[#248f82] text-white shadow-md">
         <div className="max-w-4xl mx-auto space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
             Nuestras Habitaciones
