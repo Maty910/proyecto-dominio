@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { sendMessageToGemini } from '../../services/gemini'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+// 1. Importamos useLocation para saber en qué página estamos
+import { useLocation } from 'react-router-dom'
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -23,6 +25,9 @@ export default function ChatAssistant() {
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  
+  // 2. Hook para detectar la ruta
+  const location = useLocation()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -31,6 +36,11 @@ export default function ChatAssistant() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // 3. Lógica para ocultar el chat en Login y Register
+  // Si estamos en alguna de estas rutas, no renderizamos NADA.
+  const isAuthPage = ['/login', '/register'].includes(location.pathname)
+  if (isAuthPage) return null
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,20 +56,31 @@ export default function ChatAssistant() {
     setInputText('')
     setIsLoading(true)
 
-    const responseText = await sendMessageToGemini(inputText)
-    
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: responseText,
-      sender: 'bot'
+    try {
+        const responseText = await sendMessageToGemini(inputText)
+        
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: responseText,
+          sender: 'bot'
+        }
+        setMessages(prev => [...prev, botMessage])
+    } catch (error) {
+        // Manejo básico de error por si falla Gemini
+        const errorMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: "Lo siento, tuve un problema al procesar tu mensaje.",
+            sender: 'bot'
+        }
+        setMessages(prev => [...prev, errorMessage])
+    } finally {
+        setIsLoading(false)
     }
-
-    setMessages(prev => [...prev, botMessage])
-    setIsLoading(false)
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    // 4. Subimos el z-index a 60 (la Navbar tiene 50) para evitar conflictos visuales
+    <div className="fixed bottom-6 right-6 z-60 flex flex-col items-end">
       <AnimatePresence>
         {isOpen && (
           <motion.div

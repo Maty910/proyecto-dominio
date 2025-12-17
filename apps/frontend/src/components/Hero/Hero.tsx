@@ -35,7 +35,7 @@ export function Hero() {
         
         {/* Títulos... (Igual que antes) */}
         <div className="space-y-4">
-          <span className="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-sm text-white text-xs font-semibold tracking-wider border border-white/10">
+          <span className="inline-block py-1 px-3 mt-15 rounded-full bg-white/10 backdrop-blur-sm text-white text-xs font-semibold tracking-wider border border-white/10">
             EXPERIENCIA DE LUJO
           </span>
           <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight">

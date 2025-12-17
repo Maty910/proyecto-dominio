@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Menu, X, User, LogOut, Hotel } from "lucide-react"
+import { Menu, X, User, LogOut, Hotel, CalendarCheck } from "lucide-react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import { clsx, type ClassValue } from "clsx"
@@ -12,19 +12,16 @@ function cn(...inputs: ClassValue[]) {
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  
   const navigate = useNavigate()
   const location = useLocation()
-  
-  // Simulación de auth
   const token = localStorage.getItem("token")
   
-  // Detectamos si estamos en la home para aplicar el efecto transparente
   const isHome = location.pathname === "/"
 
   useEffect(() => {
     const handleScroll = () => {
-      // Bajamos el umbral a 10px para que reaccione rápido
-      setIsScrolled(window.scrollY > 10)
+      setIsScrolled(window.scrollY > 20)
     }
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
@@ -36,14 +33,15 @@ export function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token")
-    navigate("/")
-    window.location.reload()
+    navigate("/login")
   }
 
-  // Lógica para determinar el estilo actual
-  // Si NO estamos en home, forzamos el estilo "scrolled" (fondo blanco, texto oscuro) siempre.
-  // Si estamos en home, dependemos del scroll.
-  const useSolidStyle = !isHome || isScrolled
+  const isTransparent = isHome && !isScrolled
+  
+  // Colores dinámicos
+  const textColor = isTransparent ? "text-white" : "text-secondary hover:text-primary"
+  const logoText = isTransparent ? "text-white" : "text-secondary"
+  const logoBg = isTransparent ? "bg-white/20 text-white" : "bg-primary text-white"
 
   const navLinks = [
     { name: "Inicio", path: "/" },
@@ -56,81 +54,85 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 w-full z-40 transition-all duration-300 border-b",
-        // Eliminamos el cambio de py-5 a py-3 para evitar el salto de altura. Usamos py-4 fijo.
-        "py-4", "pt-4",
-        useSolidStyle
-          ? "bg-white/90 backdrop-blur-md border-transparent-200 shadow-sm" 
-          : "bg-white/90 backdrop-blur-md border-transparent-200 shadow-sm"
+        "fixed top-0 left-0 w-full z-50 transition-all duration-300 antialiased",
+        isScrolled ? "py-3" : "py-5",
+        isTransparent 
+          ? "bg-transparent border-b border-white/10" 
+          : "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100"
       )}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
+        
+        {/* LOGO */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="p-2 bg-emerald-600 rounded-lg text-white group-hover:bg-emerald-700 transition-colors">
+          <div className={cn("p-2 rounded-lg transition-colors", logoBg)}>
             <Hotel size={24} />
           </div>
-          <span className={cn(
-            "text-xl font-bold tracking-tight transition-colors",
-            useSolidStyle ? "text-slate-800" : "text-slate-800"
-          )}>
-            Hotel Now
+          <span className={cn("text-xl font-medium tracking-tight transition-colors", logoText)}>
+            Hotel <span className={isTransparent ? "text-primary font-extrabold" : "text-primary"}>Now</span>
           </span>
         </Link>
 
-        {/* Desktop Nav */}
+        {/* DESKTOP MENU */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-emerald-500",
-                "text-slate-600",
-                location.pathname === link.path && ("text-emerald-600 font-semibold")
+                "text-sm font-light transition-colors relative tracking-wide",
+                textColor
               )}
             >
               {link.name}
+              
+              {/* Línea animada */}
+              {location.pathname === link.path && (
+                <motion.div 
+                    layoutId="underline"
+                    className="absolute -bottom-2 left-0 w-full h-0.5 bg-primary"
+                />
+              )}
             </Link>
           ))}
         </nav>
 
-        {/* Desktop Actions */}
+        {/* DESKTOP ACTIONS */}
         <div className="hidden md:flex items-center gap-4">
           {token ? (
             <div className="flex items-center gap-4">
+              <Link to="/reservations" className={cn("transition-colors hover:text-primary", textColor)}>
+                <CalendarCheck size={20} />
+              </Link>
+              <div className={cn("h-6 w-px mx-1", isTransparent ? "bg-white/30" : "bg-gray-300")}></div>
               <button 
                 onClick={handleLogout}
-                className={cn(
-                  "flex items-center gap-2 text-sm font-medium transition-colors",
-                  useSolidStyle ? "text-slate-500 hover:text-red-500" : "text-slate-500 hover:text-white drop-shadow-md"
-                )}
+                className={cn("flex items-center gap-2 text-sm font-light transition-colors hover:text-primary")}
               >
-                <LogOut size={18} />
-                Salir
+                <LogOut size={18} /> Salir
               </button>
-              <div className="w-10 h-10 rounded-full bg-emerald-100 border-2 border-emerald-200 flex items-center justify-center text-emerald-700 font-bold shadow-sm">
-                <User size={20} />
+              <div className="w-9 h-9 rounded-full bg-linear-to-tr from-primary to-emerald-400 p-0.5">
+                <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                    <User size={18} className="text-secondary" />
+                </div>
               </div>
             </div>
           ) : (
             <>
+              {/* CAMBIO: Usamos font-semibold. Esto elimina el borde blanco al hacer hover */}
               <Link 
                 to="/login" 
-                className={cn(
-                  "px-4 py-2 text-sm font-semibold transition-colors hover:underline",
-                  "text-slate-600"
-                )}
+                className={cn("px-4 py-2 text-white font-extralight transition-colors hover:text-primary",)}
               >
                 Ingresar
               </Link>
               <Link 
                 to="/register" 
                 className={cn(
-                  "px-5 py-2.5 rounded-full text-sm font-semibold shadow-md transition-all hover:scale-105 active:scale-95",
-                  useSolidStyle 
-                    ? "bg-slate-900 text-white hover:bg-slate-800" 
-                    : "bg-white text-emerald-900 hover:bg-emerald-50"
+                  "px-5 py-2.5 rounded-full text-sm font-bold shadow-lg transition-all hover:scale-105 active:scale-95",
+                  isTransparent 
+                    ? "bg-white text-secondary hover:bg-gray-100" 
+                    : "bg-primary text-white hover:bg-[#006244]"
                 )}
               >
                 Registrarse
@@ -139,53 +141,66 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* MOBILE MENU TOGGLE */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className={cn(
             "md:hidden p-2 rounded-lg transition-colors",
-            useSolidStyle ? "text-slate-800 hover:bg-slate-100" : "text-white hover:bg-white/10"
+            isTransparent ? "text-white hover:bg-white/10" : "text-secondary hover:bg-gray-100"
           )}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-slate-100 shadow-xl overflow-hidden"
+            className="md:hidden bg-white border-t border-gray-100 shadow-xl overflow-hidden"
           >
-            <div className="p-6 flex flex-col gap-4">
+            <div className="p-6 flex flex-col gap-4 text-secondary">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className="text-lg font-medium text-slate-600 hover:text-emerald-600 transition-colors py-2 border-b border-slate-50 last:border-0"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                      "text-lg font-medium transition-colors py-3 border-b border-gray-50 last:border-0 flex justify-between items-center",
+                      location.pathname === link.path ? "text-primary font-bold" : "text-secondary hover:text-primary"
+                  )}
                 >
                   {link.name}
+                  {location.pathname === link.path && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
                 </Link>
               ))}
               
-              <div className="mt-4 flex flex-col gap-3">
+              <div className="mt-6 flex flex-col gap-3">
                 {token ? (
                   <button 
-                  onClick={handleLogout}
-                  className="w-full py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors"
-                >
-                  <LogOut size={18} />
-                  Cerrar Sesión
-                </button>
+                    onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                    className="w-full py-3 rounded-xl border border-red-100 text-red-600 bg-red-50 font-semibold flex items-center justify-center gap-2 hover:bg-red-100 transition-colors"
+                  >
+                    <LogOut size={18} />
+                    Cerrar Sesión
+                  </button>
                 ) : (
                   <>
-                    <Link to="/login" className="w-full py-3 rounded-xl border-2 border-slate-200 text-slate-700 font-bold text-center hover:border-slate-300 transition-colors">
+                    <Link 
+                        to="/login" 
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="w-full py-3 rounded-xl border-2 border-secondary text-secondary font-bold text-center hover:bg-secondary hover:text-white transition-colors"
+                    >
                       Iniciar Sesión
                     </Link>
-                    <Link to="/register" className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold text-center shadow-lg hover:bg-emerald-700 transition-colors">
+                    <Link 
+                        to="/register" 
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="w-full py-3 rounded-xl bg-primary text-white font-bold text-center shadow-lg hover:bg-[#006244] transition-colors"
+                    >
                       Crear Cuenta
                     </Link>
                   </>
