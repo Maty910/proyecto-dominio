@@ -31,7 +31,6 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-background font-sans text-secondary selection:bg-primary/20 selection:text-primary">
-      <Navbar />
       <Hero />
 
       {/* --- SECCIÓN 1: HABITACIONES DESTACADAS --- */}
