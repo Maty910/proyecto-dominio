@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react"
-import { Navbar } from "..//Navbar/Navbar"
 import { Hero } from "../Hero/Hero"
 import RoomsGrid from "../Rooms/RoomsGrid"
 import ChatAssistant from "..//ChatAssistant/ChatAssistant"
-import { Features } from "../Home/Features" // <--- Import nuevo
-import { Testimonials } from "..//Home/Testimonials" // <--- Import nuevo
+import { Features } from "../Home/Features"
+import { Testimonials } from "..//Home/Testimonials" 
 import { MOCK_ROOMS } from "../../../../backend/src/data/rooms"
 import type { Room } from "../../types/types"
 import { Loader2, Mail } from "lucide-react"
